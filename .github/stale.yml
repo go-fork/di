@@ -1,0 +1,26 @@
+# Cấu hình cho stale bot
+# Đánh dấu issues và PRs không hoạt động là cũ và đóng sau khoảng thời gian
+
+# Số ngày không hoạt động trước khi issue được đánh dấu là cũ
+daysUntilStale: 60
+# Số ngày không hoạt động sau khi issue được đánh dấu là cũ trước khi đóng
+daysUntilClose: 14
+# Issues với những labels này sẽ không bao giờ được đánh dấu là cũ
+exemptLabels:
+  - pinned
+  - security
+  - enhancement
+  - bug
+  - "in progress"
+# Label được áp dụng khi issue được đánh dấu là cũ
+staleLabel: wontfix
+# Comment được gửi khi issue được đánh dấu là cũ
+markComment: >
+  Issue này đã được đánh dấu là cũ vì nó không có hoạt động gần đây. Issue sẽ bị
+  đóng nếu không có hoạt động mới trong 14 ngày tới. Cảm ơn bạn đã đóng góp.
+# Comment được gửi khi issue bị đóng
+closeComment: >
+  Issue này đã bị đóng vì không có hoạt động mới. Vui lòng mở lại issue nếu
+  bạn vẫn gặp phải vấn đề này.
+# Chỉ áp dụng cho issues, không áp dụng cho PRs
+only: issues

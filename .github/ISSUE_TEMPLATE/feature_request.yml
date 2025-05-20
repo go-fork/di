@@ -1,0 +1,35 @@
+name: Feature request
+description: Đề xuất một ý tưởng cho go-fork/di
+title: "[FEATURE]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Cảm ơn bạn đã quan tâm đến việc cải thiện go-fork/di!
+  - type: textarea
+    id: problem
+    attributes:
+      label: Vấn đề liên quan
+      description: Mô tả vấn đề mà tính năng này sẽ giải quyết
+      placeholder: Tôi gặp khó khăn khi... Sẽ hữu ích nếu có thể...
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Giải pháp đề xuất
+      description: Mô tả giải pháp hoặc tính năng bạn muốn
+      placeholder: Tôi muốn có một phương thức mới/cải tiến để...
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Giải pháp thay thế
+      description: Mô tả bất kỳ giải pháp thay thế hoặc tính năng nào bạn đã xem xét
+  - type: textarea
+    id: context
+    attributes:
+      label: Thông tin bổ sung
+      description: Thêm bất kỳ thông tin hoặc ví dụ code nào khác về tính năng yêu cầu

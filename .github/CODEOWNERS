@@ -1,0 +1,26 @@
+# Đây là file CODEOWNERS cho go-fork/di
+# Mỗi dòng là một file pattern được theo sau bởi một hoặc nhiều owners.
+# Order is important; the last matching pattern takes the most precedence.
+
+# Các maintainer chính cho toàn bộ dự án
+*       @go-fork/maintainers
+
+# Di container core
+/container.go   @go-fork/core-team
+/binding.go     @go-fork/core-team
+/provider.go    @go-fork/core-team
+/application.go @go-fork/core-team
+/deferred.go    @go-fork/core-team
+/loader.go      @go-fork/core-team
+
+# Documentation owners
+/doc.go         @go-fork/docs-team
+/README.md      @go-fork/docs-team
+/CHANGELOG.md   @go-fork/docs-team
+/LICENSE        @go-fork/legal-team
+
+# Tests
+*_test.go       @go-fork/test-team
+
+# CI/CD configuration
+/.github/       @go-fork/devops-team

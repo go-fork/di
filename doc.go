@@ -64,6 +64,7 @@
 //   - deferred.go: Deferred service provider
 //   - application.go: Chuẩn hóa interface Application
 //   - loader.go: ModuleLoader contract và thực thi
+//   - mocks/: Chứa các mock objects cho các interface chính, được tạo bằng mockery
 //
 // Package này là nền tảng cho cấu trúc hệ thống Fork, cho phép xây dựng các ứng dụng theo kiến trúc mô-đun với khả năng mở rộng cao.
 package di

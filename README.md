@@ -89,7 +89,38 @@ container.Call(func(userService *UserService) {
 })
 ```
 
-Xem [doc.go](./doc.go) để biết thêm chi tiết.
+### Mocks cho Testing
+
+Package này cung cấp sẵn các mock cho các interface chính (trong thư mục `mocks/`):
+- Application
+- ServiceProvider
+- ServiceProviderDeferred
+- ModuleLoaderContract
+
+```go
+import (
+    "testing"
+    "github.com/go-fork/di/mocks"
+    "github.com/stretchr/testify/mock"
+)
+
+func TestMyService(t *testing.T) {
+    // Tạo mock cho Application
+    mockApp := new(mocks.Application)
+    
+    // Thiết lập mock behavior
+    mockApp.On("Make", "config").Return("test-config", nil)
+    
+    // Sử dụng mock trong test
+    service := NewMyService(mockApp)
+    result := service.DoSomething()
+    
+    // Kiểm tra mock được gọi đúng cách
+    mockApp.AssertExpectations(t)
+}
+```
+
+Xem [doc.go](./doc.go) và [mocks/README.md](./mocks/README.md) để biết thêm chi tiết.
 
 ## Giấy phép
 MIT

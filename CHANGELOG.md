@@ -6,6 +6,8 @@ Tất cả các thay đổi đáng chú ý của dự án go-fork/di sẽ đư�
 và dự án này tuân theo [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.0.3] - 2025-05-24
 ### Added
 - Thư mục mocks/ chứa các mock objects cho tất cả interface chính
 - Tích hợp mockery để tạo mocks tự động

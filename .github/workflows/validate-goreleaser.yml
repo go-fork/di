@@ -1,0 +1,46 @@
+name: Validate GoReleaser
+
+on:
+  push:
+    paths:
+      - '.goreleaser.yml'
+      - '.goreleaser.yaml'
+  pull_request:
+    paths:
+      - '.goreleaser.yml'
+      - '.goreleaser.yaml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate GoReleaser Config
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.x'
+          cache: true
+
+      - name: Run GoReleaser Check
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          distribution: goreleaser
+          version: '~> v2'
+          args: check
+
+      - name: Run GoReleaser Build (dry-run)
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          distribution: goreleaser
+          version: '~> v2'
+          args: build --snapshot --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,31 +1,63 @@
 version: 2
 updates:
+  # Go modules dependencies
   - package-ecosystem: "gomod"
     directory: "/"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 5
+    target-branch: "main"
     assignees:
       - "go-fork/maintainers"
     labels:
       - "dependencies"
+      - "go"
       - "automerge"
     commit-message:
       prefix: "deps"
+      prefix-development: "deps-dev"
       include: "scope"
     reviewers:
       - "go-fork/maintainers"
+    ignore:
+      # Ignore patch updates for testify (only allow minor/major)
+      - dependency-name: "github.com/stretchr/testify"
+        update-types: ["version-update:semver-patch"]
 
+  # GitHub Actions dependencies
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "monthly"
-    open-pull-requests-limit: 10
+      interval: "weekly"
+      day: "monday"
+      time: "10:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 3
+    target-branch: "main"
     assignees:
       - "go-fork/devops-team"
     labels:
       - "dependencies"
-      - "github_actions"
+      - "github-actions"
+      - "ci"
     commit-message:
       prefix: "ci"
       include: "scope"
+    reviewers:
+      - "go-fork/maintainers"
+
+  # Docker dependencies (if any Dockerfiles exist)
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 2
+    labels:
+      - "dependencies"
+      - "docker"

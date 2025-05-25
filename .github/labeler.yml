@@ -1,0 +1,72 @@
+# Labeler configuration for pull requests
+# See: https://github.com/actions/labeler
+
+# Core library files
+'area/core':
+  - changed-files:
+    - any-glob-to-any-file: 
+      - 'container.go'
+      - 'application.go'
+      - 'binding.go'
+      - 'loader.go'
+      - 'provider.go'
+      - 'deferred.go'
+
+# Documentation changes
+'area/docs':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'README.md'
+      - 'doc.go'
+      - 'CHANGELOG.md'
+      - 'docs/**/*'
+      - '*.md'
+
+# Test files
+'area/tests':
+  - changed-files:
+    - any-glob-to-any-file:
+      - '*_test.go'
+      - 'mocks/**/*'
+
+# CI/CD changes
+'area/ci':
+  - changed-files:
+    - any-glob-to-any-file:
+      - '.github/**/*'
+      - '.goreleaser.yml'
+      - 'Dockerfile*'
+
+# Dependencies
+'dependencies':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'go.mod'
+      - 'go.sum'
+
+# Performance related
+'area/performance':
+  - changed-files:
+    - any-glob-to-any-file:
+      - '*benchmark*'
+      - '*_bench.go'
+
+# Breaking changes (requires manual review)
+'breaking-change':
+  - head-branch: ['breaking/**', 'major/**']
+
+# Feature additions
+'type/feature':
+  - head-branch: ['feature/**', 'feat/**']
+
+# Bug fixes
+'type/bug':
+  - head-branch: ['fix/**', 'bugfix/**', 'hotfix/**']
+
+# Refactoring
+'type/refactor':
+  - head-branch: ['refactor/**', 'refac/**']
+
+# Chores
+'type/chore':
+  - head-branch: ['chore/**', 'maintenance/**']

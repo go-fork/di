@@ -1,0 +1,85 @@
+# Issue labeler configuration
+# See: https://github.com/github/issue-labeler
+
+# Bug reports
+'type/bug':
+  - 'bug'
+  - 'error'
+  - 'crash'
+  - 'panic'
+  - 'exception'
+  - 'broken'
+  - 'not working'
+  - 'issue'
+  - 'problem'
+
+# Feature requests
+'type/feature':
+  - 'feature'
+  - 'enhancement'
+  - 'improvement'
+  - 'add'
+  - 'support'
+  - 'implement'
+  - 'new'
+
+# Questions
+'type/question':
+  - 'question'
+  - 'how to'
+  - 'help'
+  - 'guidance'
+  - 'clarification'
+  - 'usage'
+
+# Documentation
+'area/docs':
+  - 'documentation'
+  - 'docs'
+  - 'readme'
+  - 'guide'
+  - 'tutorial'
+  - 'example'
+
+# Performance issues
+'area/performance':
+  - 'performance'
+  - 'slow'
+  - 'memory'
+  - 'cpu'
+  - 'optimization'
+  - 'benchmark'
+  - 'speed'
+
+# Core functionality
+'area/core':
+  - 'container'
+  - 'dependency injection'
+  - 'DI'
+  - 'binding'
+  - 'provider'
+  - 'service'
+  - 'resolve'
+  - 'register'
+
+# Testing related
+'area/tests':
+  - 'test'
+  - 'testing'
+  - 'mock'
+  - 'coverage'
+
+# Good first issues for newcomers
+'good first issue':
+  - 'beginner'
+  - 'easy'
+  - 'simple'
+  - 'starter'
+  - 'newcomer'
+
+# Help wanted
+'help wanted':
+  - 'help wanted'
+  - 'community'
+  - 'contribution'
+  - 'volunteer'

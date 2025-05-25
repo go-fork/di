@@ -1,0 +1,109 @@
+name: Compatibility Check
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+  schedule:
+    # Run every Wednesday at 14:00 UTC
+    - cron: '0 14 * * 3'
+
+permissions:
+  contents: read
+
+jobs:
+  compatibility:
+    name: Go Compatibility
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        go-version: 
+          - '1.21.x'    # Minimum supported version
+          - '1.22.x'    # Previous stable
+          - '1.23.x'    # Current stable
+          - '1.24.x'    # Beta/RC (if available)
+          - 'stable'    # Latest stable
+        exclude:
+          # Exclude combinations that are likely to fail or are redundant
+          - os: windows-latest
+            go-version: '1.24.x'
+          - os: macos-latest
+            go-version: '1.24.x'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go-version }}
+          cache: true
+        continue-on-error: true
+
+      - name: Check Go version
+        run: go version
+
+      - name: Get dependencies
+        run: go mod download
+
+      - name: Verify dependencies
+        run: go mod verify
+
+      - name: Build
+        run: go build -v ./...
+
+      - name: Test
+        run: go test -v -race ./...
+
+      - name: Test with different build tags
+        run: |
+          go test -v -race -tags=integration ./...
+          go test -v -race -tags=unit ./...
+
+  module-compatibility:
+    name: Module Compatibility
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: ['1.21.x', '1.22.x', '1.23.x']
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go-version }}
+          cache: true
+
+      - name: Check go.mod compatibility
+        run: |
+          go mod verify
+          go mod graph
+          go list -m all
+
+      - name: Test minimal module
+        run: |
+          mkdir -p /tmp/test-module
+          cd /tmp/test-module
+          go mod init test-module
+          go get github.com/go-fork/di@${{ github.sha }}
+          cat > main.go << 'EOF'
+          package main
+          
+          import (
+              "fmt"
+              "github.com/go-fork/di"
+          )
+          
+          func main() {
+              container := di.NewContainer()
+              fmt.Println("DI container created successfully")
+          }
+          EOF
+          go run main.go

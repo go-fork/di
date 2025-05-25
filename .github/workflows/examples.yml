@@ -1,0 +1,150 @@
+name: Example Tests
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+permissions:
+  contents: read
+
+jobs:
+  examples:
+    name: Test Examples
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.x'
+          cache: true
+
+      - name: Create example project
+        run: |
+          mkdir -p /tmp/example-project
+          cd /tmp/example-project
+          
+          # Initialize module
+          go mod init example-di-project
+          
+          # Add local dependency
+          go mod edit -replace github.com/go-fork/di=${{ github.workspace }}
+          go get github.com/go-fork/di
+          
+          # Create basic example
+          cat > main.go << 'EOF'
+          package main
+          
+          import (
+              "fmt"
+              "log"
+              "github.com/go-fork/di"
+          )
+          
+          type Database interface {
+              Connect() string
+          }
+          
+          type MySQLDatabase struct{}
+          
+          func (db *MySQLDatabase) Connect() string {
+              return "Connected to MySQL"
+          }
+          
+          type UserService struct {
+              DB Database
+          }
+          
+          func (s *UserService) GetUsers() string {
+              return fmt.Sprintf("Getting users from: %s", s.DB.Connect())
+          }
+          
+          func main() {
+              container := di.NewContainer()
+              
+              // Register services
+              container.Bind("database", func() interface{} {
+                  return &MySQLDatabase{}
+              })
+              
+              container.Bind("userService", func() interface{} {
+                  db, err := container.Resolve("database")
+                  if err != nil {
+                      log.Fatal(err)
+                  }
+                  return &UserService{DB: db.(Database)}
+              })
+              
+              // Resolve and use
+              userService, err := container.Resolve("userService")
+              if err != nil {
+                  log.Fatal(err)
+              }
+              
+              result := userService.(*UserService).GetUsers()
+              fmt.Println(result)
+          }
+          EOF
+          
+          # Test the example
+          go run main.go
+
+      - name: Test with different scenarios
+        run: |
+          cd /tmp/example-project
+          
+          # Create advanced example with providers
+          cat > advanced.go << 'EOF'
+          package main
+          
+          import (
+              "fmt"
+              "github.com/go-fork/di"
+          )
+          
+          type Logger interface {
+              Log(message string)
+          }
+          
+          type ConsoleLogger struct{}
+          
+          func (l *ConsoleLogger) Log(message string) {
+              fmt.Printf("[LOG] %s\n", message)
+          }
+          
+          type Config struct {
+              DatabaseURL string
+              Port        int
+          }
+          
+          func main() {
+              container := di.NewContainer()
+              
+              // Singleton binding
+              container.Singleton("config", func() interface{} {
+                  return &Config{
+                      DatabaseURL: "mysql://localhost:3306/mydb",
+                      Port:        8080,
+                  }
+              })
+              
+              // Instance binding
+              container.Instance("logger", &ConsoleLogger{})
+              
+              // Test resolving
+              config, _ := container.Resolve("config")
+              logger, _ := container.Resolve("logger")
+              
+              cfg := config.(*Config)
+              log := logger.(Logger)
+              
+              log.Log(fmt.Sprintf("Starting server on port %d", cfg.Port))
+              log.Log(fmt.Sprintf("Database URL: %s", cfg.DatabaseURL))
+          }
+          EOF
+          
+          go run advanced.go

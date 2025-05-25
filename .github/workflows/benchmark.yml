@@ -1,0 +1,68 @@
+name: Benchmark
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  schedule:
+    # Run benchmarks every Sunday at 12:00 UTC
+    - cron: '0 12 * * 0'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  benchmark:
+    name: Benchmark
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.x'
+          cache: true
+
+      - name: Run benchmarks
+        run: |
+          go test -bench=. -benchmem -count=3 -timeout=30m ./... | tee benchmark.txt
+
+      - name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          tool: 'go'
+          output-file-path: benchmark.txt
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: true
+          comment-on-alert: true
+          alert-threshold: '200%'
+          fail-on-alert: false
+
+  memory-profile:
+    name: Memory Profile
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.x'
+          cache: true
+
+      - name: Run memory profiling
+        run: |
+          go test -memprofile=mem.prof -bench=. ./...
+          go tool pprof -text mem.prof > memory_profile.txt
+
+      - name: Upload memory profile
+        uses: actions/upload-artifact@v4
+        with:
+          name: memory-profile
+          path: memory_profile.txt
+          retention-days: 30

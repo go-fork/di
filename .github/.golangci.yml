@@ -1,18 +1,32 @@
 run:
-  timeout: 5m
+  timeout: 10m
   modules-download-mode: readonly
   tests: true
   skip-dirs:
     - examples
+    - vendor
+    - .github
+  skip-files:
+    - ".*\\.pb\\.go$"
+    - ".*\\.gen\\.go$"
+
+output:
+  formats:
+    - format: colored-line-number
+      path: stdout
+  sort-results: true
 
 linters:
   enable:
+    # Default linters
     - errcheck
     - gosimple
     - govet
     - ineffassign
     - staticcheck
     - unused
+    
+    # Additional useful linters for library code
     - gosec
     - gofmt
     - goimports
@@ -21,24 +35,141 @@ linters:
     - misspell
     - whitespace
     - stylecheck
+    - unconvert
+    - unparam
+    - nakedret
+    - prealloc
+    - exportloopref
+    - nolintlint
+    - revive
+    - gofumpt
+    - gci
+    - godot
+    - err113
+    - errorlint
+    - contextcheck
+    - durationcheck
+    - forcetypeassert
+    - nilerr
+    - nilnil
+    - tenv
+    - testpackage
+    - wrapcheck
+
+  disable:
+    - deadcode  # deprecated
+    - golint    # deprecated
+    - interfacer # deprecated
+    - maligned  # deprecated
+    - scopelint # deprecated
+    - varcheck  # deprecated
+    - structcheck # deprecated
 
 linters-settings:
   gocyclo:
-    min-complexity: 15
-  golint:
-    min-confidence: 0
+    min-complexity: 12
+    
   goconst:
     min-len: 3
     min-occurrences: 3
+    ignore-tests: true
+    
   misspell:
     locale: US
+    ignore-words:
+      - "vietnames"
+      
+  stylecheck:
+    checks: ["all", "-ST1000", "-ST1003", "-ST1016", "-ST1020", "-ST1021", "-ST1022"]
+    
+  gosec:
+    excludes:
+      - G204
+      - G301
+      - G302
+      - G304
+      - G404
+      
+  revive:
+    rules:
+      - name: exported
+        arguments: [false]
+      - name: package-comments
+        disabled: true
+      - name: comment-spacings
+        disabled: true
+        
+  goimports:
+    local-prefixes: github.com/go-fork/di
+    
+  gofumpt:
+    extra-rules: true
+    
+  gci:
+    sections:
+      - standard
+      - default
+      - prefix(github.com/go-fork/di)
+    skip-generated: true
+    
+  godot:
+    scope: declarations
+    exclude:
+      - "^func Test"
+      - "^func Benchmark"
+    period: true
+    capital: true
+    
+  err113:
+    check-type-assertions: true
+    check-blank-assignments: true
+    
+  wrapcheck:
+    ignoreSigs:
+      - .Errorf(
+      - errors.New(
+      - errors.Unwrap(
+      - .Wrap(
+      - .Wrapf(
+      
+  nakedret:
+    max-func-lines: 30
+    
+  unparam:
+    check-exported: true
 
 issues:
+  exclude-use-default: false
   exclude-rules:
+    # Exclude some linters from running on tests files.
     - path: _test\.go
       linters:
         - gosec
         - errcheck
+        - goconst
+        - gocyclo
+        - unparam
+        - wrapcheck
+        - err113
+        - forcetypeassert
+        - testpackage
+        
+    # Exclude some staticcheck messages
+    - linters:
+        - staticcheck
+      text: "SA9003:"
+      
+    # Exclude lll issues for long lines with go:generate
+    - linters:
+        - lll
+      source: "^//go:generate "
+      
+    # Disable wrapcheck for main and init functions
+    - linters:
+        - wrapcheck
+      source: "^func (main|init)\\("
 
   max-issues-per-linter: 0
   max-same-issues: 0
+  new: false
+  fix: false

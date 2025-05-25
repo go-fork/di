@@ -31,16 +31,12 @@ jobs:
         run: |
           go test -bench=. -benchmem -count=3 -timeout=30m ./... | tee benchmark.txt
 
-      - name: Store benchmark result
-        uses: benchmark-action/github-action-benchmark@v1
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
         with:
-          tool: 'go'
-          output-file-path: benchmark.txt
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          auto-push: true
-          comment-on-alert: true
-          alert-threshold: '200%'
-          fail-on-alert: false
+          name: benchmark-results
+          path: benchmark.txt
+          retention-days: 30
 
   memory-profile:
     name: Memory Profile

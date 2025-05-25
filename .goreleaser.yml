@@ -50,9 +50,9 @@ builds:
 # Archives - Even though we skip builds, this is kept for consistency
 archives:
   - id: "library-archive"
-    builds:
-      - "library"
-    format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
     name_template: >-
       {{ .ProjectName }}_
       {{- .Version }}_

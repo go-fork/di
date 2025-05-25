@@ -64,15 +64,15 @@ jobs:
           }
           
           func main() {
-              container := di.NewContainer()
+              container := di.New()
               
               // Register services
-              container.Bind("database", func() interface{} {
+              container.Bind("database", func(c *di.Container) interface{} {
                   return &MySQLDatabase{}
               })
               
-              container.Bind("userService", func() interface{} {
-                  db, err := container.Resolve("database")
+              container.Bind("userService", func(c *di.Container) interface{} {
+                  db, err := c.Make("database")
                   if err != nil {
                       log.Fatal(err)
                   }
@@ -80,7 +80,7 @@ jobs:
               })
               
               // Resolve and use
-              userService, err := container.Resolve("userService")
+              userService, err := container.Make("userService")
               if err != nil {
                   log.Fatal(err)
               }
@@ -122,10 +122,10 @@ jobs:
           }
           
           func main() {
-              container := di.NewContainer()
+              container := di.New()
               
               // Singleton binding
-              container.Singleton("config", func() interface{} {
+              container.Singleton("config", func(c *di.Container) interface{} {
                   return &Config{
                       DatabaseURL: "mysql://localhost:3306/mydb",
                       Port:        8080,
@@ -136,8 +136,8 @@ jobs:
               container.Instance("logger", &ConsoleLogger{})
               
               // Test resolving
-              config, _ := container.Resolve("config")
-              logger, _ := container.Resolve("logger")
+              config, _ := container.Make("config")
+              logger, _ := container.Make("logger")
               
               cfg := config.(*Config)
               log := logger.(Logger)

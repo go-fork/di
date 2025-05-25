@@ -875,3 +875,78 @@ func TestSingletonResolver(t *testing.T) {
 		t.Error("Factory function không nên được gọi khi instance đã tồn tại")
 	}
 }
+
+// Benchmark functions for performance testing
+
+func BenchmarkContainerBind(b *testing.B) {
+	container := New()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		key := fmt.Sprintf("service_%d", i)
+		container.Bind(key, func(c *Container) interface{} {
+			return &MockService{ID: key}
+		})
+	}
+}
+
+func BenchmarkContainerMake(b *testing.B) {
+	container := New()
+
+	// Setup: bind a service
+	container.Bind("service", func(c *Container) interface{} {
+		return &MockService{ID: "benchmark"}
+	})
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_, _ = container.Make("service")
+	}
+}
+
+func BenchmarkContainerMakeSingleton(b *testing.B) {
+	container := New()
+
+	// Setup: bind a singleton service
+	container.Singleton("service", func(c *Container) interface{} {
+		return &MockService{ID: "singleton"}
+	})
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_, _ = container.Make("service")
+	}
+}
+
+func BenchmarkContainerBindInstance(b *testing.B) {
+	container := New()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		key := fmt.Sprintf("instance_%d", i)
+		service := &MockService{ID: key}
+		container.Instance(key, service)
+	}
+}
+
+func BenchmarkContainerConcurrentMake(b *testing.B) {
+	container := New()
+
+	// Setup: bind multiple services
+	for i := 0; i < 10; i++ {
+		key := fmt.Sprintf("service_%d", i)
+		container.Bind(key, func(c *Container) interface{} {
+			return &MockService{ID: key}
+		})
+	}
+
+	b.ResetTimer()
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			key := "service_0" // Always use the first service
+			_, _ = container.Make(key)
+		}
+	})
+}

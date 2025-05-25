@@ -57,7 +57,7 @@ jobs:
 
       - name: Run memory profiling
         run: |
-          go test -memprofile=mem.prof -bench=. ./...
+          go test -memprofile=mem.prof -bench=. .
           go tool pprof -text mem.prof > memory_profile.txt
 
       - name: Upload memory profile

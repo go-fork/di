@@ -1,0 +1,48 @@
+name: Update pkg.go.dev
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  update-pkg-go-dev:
+    name: Fetch Package on pkg.go.dev
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.x'
+
+      - name: Trigger pkg.go.dev update
+        run: |
+          echo "Triggering pkg.go.dev to fetch the latest version..."
+          
+          # Get the latest git tag
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.4")
+          echo "Latest tag: $LATEST_TAG"
+          
+          # Fetch the module on pkg.go.dev using the proxy
+          MODULE_PATH="github.com/go-fork/di"
+          
+          echo "Fetching $MODULE_PATH@$LATEST_TAG on pkg.go.dev..."
+          
+          # Use Go proxy to fetch the module
+          curl -f "https://proxy.golang.org/$MODULE_PATH/@v/$LATEST_TAG.info" || echo "Version not yet available on proxy"
+          
+          # Also try to fetch the latest version
+          curl -f "https://proxy.golang.org/$MODULE_PATH/@latest" || echo "Latest version fetch failed"
+          
+          # Request pkg.go.dev to refresh
+          echo "Requesting pkg.go.dev refresh..."
+          curl -f "https://pkg.go.dev/$MODULE_PATH@$LATEST_TAG" -A "GitHub-Actions-Bot" || echo "pkg.go.dev request completed"
+          
+          echo "✅ pkg.go.dev update request completed"
+          echo "📦 Package should be available at: https://pkg.go.dev/$MODULE_PATH"

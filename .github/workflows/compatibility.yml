@@ -102,7 +102,7 @@ jobs:
           )
           
           func main() {
-              container := di.NewContainer()
+              container := di.New()
               fmt.Println("DI container created successfully")
           }
           EOF

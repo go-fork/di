@@ -1,4 +1,5 @@
 # GoReleaser configuration for go-fork/di library
+version: 2
 project_name: di
 dist: dist
 
@@ -141,7 +142,7 @@ checksum:
 
 # Snapshots
 snapshot:
-  name_template: "{{ incpatch .Version }}-next"
+  version_template: "{{ incpatch .Version }}-next"
 
 # Sign
 signs:

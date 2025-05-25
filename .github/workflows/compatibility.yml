@@ -101,9 +101,25 @@ jobs:
               "github.com/go-fork/di"
           )
           
+          type Service struct {
+              Name string
+          }
+          
           func main() {
               container := di.New()
-              fmt.Println("DI container created successfully")
+              
+              // Bind a service to demonstrate container usage
+              container.Bind("service", func(c *di.Container) interface{} {
+                  return &Service{Name: "test-service"}
+              })
+              
+              // Make the service to demonstrate functionality
+              service, err := container.Make("service")
+              if err != nil {
+                  panic(err)
+              }
+              
+              fmt.Printf("DI container created successfully and resolved service: %v\n", service.(*Service).Name)
           }
           EOF
           go run main.go

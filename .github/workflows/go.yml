@@ -60,7 +60,7 @@ jobs:
         run: go vet ./...
 
       - name: Run tests
-        run: go test -race -coverprofile=coverage.out -covermode=atomic -v ./...
+        run: go test -race -coverprofile=coverage.out -covermode=atomic -v $(go list ./... | grep -v '/mocks')
 
       - name: Upload coverage to Codecov
         if: matrix.os == 'ubuntu-latest' && matrix.go-version == '1.23.x'

@@ -53,6 +53,16 @@ func (p *MockServiceProvider) Boot(app interface{}) error {
 	return p.BootError
 }
 
+// Requires implement ServiceProvider.Requires
+func (p *MockServiceProvider) Requires() []string {
+	return []string{}
+}
+
+// Providers implement ServiceProvider.Providers
+func (p *MockServiceProvider) Providers() []string {
+	return []string{"mock.service"}
+}
+
 // MockDeferredProvider là ServiceProviderDeferred mẫu cho testing
 type MockDeferredProvider struct {
 	MockServiceProvider
@@ -110,6 +120,7 @@ type mockApp struct {
 
 func (m *mockApp) Container() *Container                      { return m.container }
 func (m *mockApp) RegisterServiceProviders() error            { return nil }
+func (m *mockApp) RegisterWithDependencies() error            { return nil }
 func (m *mockApp) BootServiceProviders() error                { return nil }
 func (m *mockApp) Register(provider ServiceProvider)          { provider.Register(m) }
 func (m *mockApp) Boot() error                                { return nil }

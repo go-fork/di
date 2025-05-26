@@ -21,6 +21,9 @@ package di
 //   - RegisterServiceProviders() error
 //     Đăng ký tất cả service provider. Trả về error nếu có lỗi khi đăng ký.
 //
+//   - RegisterWithDependencies() error
+//     Đăng ký và sắp xếp providers theo thứ tự phụ thuộc. Trả về error nếu có circular dependency.
+//
 //   - BootServiceProviders() error
 //     Boot tất cả service provider. Trả về error nếu có lỗi khi boot.
 //
@@ -72,6 +75,15 @@ type Application interface {
 	// Exceptions:
 	//   - Trả về error nếu provider nil, duplicate hoặc có lỗi khi đăng ký.
 	RegisterServiceProviders() error
+
+	// RegisterWithDependencies đăng ký và sắp xếp providers theo thứ tự phụ thuộc
+	//
+	// Mục đích:
+	//   - Tự động sắp xếp và đăng ký providers theo thứ tự phụ thuộc
+	//   - Phát hiện circular dependencies
+	// Trả về:
+	//   - error: Lỗi nếu có circular dependency hoặc không tìm thấy provider yêu cầu
+	RegisterWithDependencies() error
 
 	// BootServiceProviders boot tất cả các service provider đã đăng ký.
 	//

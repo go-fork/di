@@ -7,6 +7,16 @@ và dự án này tuân theo [Semantic Versioning](https://semver.org/spec/v2.0.
 
 ## [Unreleased]
 
+### Added
+- Thêm method `Requires()` vào ServiceProvider interface để quản lý dependencies giữa các provider
+- Thêm method `Providers()` vào ServiceProvider interface để liệt kê các service được đăng ký
+- Thêm method `RegisterWithDependencies()` vào Application interface để tự động sắp xếp thứ tự đăng ký provider theo dependencies
+- Cập nhật mocks tương ứng cho tất cả các interface changes
+
+### Changed
+- Cải thiện dependency management với khả năng tự động phát hiện và sắp xếp thứ tự provider dependencies
+- Nâng cao khả năng debug và kiểm tra service registration thông qua method `Providers()`
+
 ## [0.0.3] - 2025-05-24
 ### Added
 - Thư mục mocks/ chứa các mock objects cho tất cả interface chính

@@ -19,6 +19,46 @@ func (_m *ServiceProvider) Register(app interface{}) {
 	_m.Called(app)
 }
 
+// Requires provides a mock function with no fields
+func (_m *ServiceProvider) Requires() []string {
+	ret := _m.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for Requires")
+	}
+
+	var r0 []string
+	if rf, ok := ret.Get(0).(func() []string); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]string)
+		}
+	}
+
+	return r0
+}
+
+// Providers provides a mock function with no fields
+func (_m *ServiceProvider) Providers() []string {
+	ret := _m.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for Providers")
+	}
+
+	var r0 []string
+	if rf, ok := ret.Get(0).(func() []string); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]string)
+		}
+	}
+
+	return r0
+}
+
 // NewServiceProvider creates a new instance of ServiceProvider. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewServiceProvider(t interface {

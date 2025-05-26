@@ -3,8 +3,9 @@
 Một container Dependency Injection (DI) hiện đại, nhẹ nhàng cho Go, lấy cảm hứng từ Laravel và các framework hiện đại. Cung cấp đăng ký dịch vụ, giải quyết phụ thuộc và quản lý vòng đời cho việc xây dựng ứng dụng Go có khả năng mở rộng.
 
 ## Tính năng
-- Mẫu Service Provider
+- Mẫu Service Provider với dependency management
 - Tự động giải quyết phụ thuộc
+- Tự động sắp xếp thứ tự provider dependencies  
 - Binding singleton và transient
 - Tải dịch vụ trì hoãn (deferred)
 - API đơn giản, không cần tạo mã
@@ -89,11 +90,43 @@ container.Call(func(userService *UserService) {
 })
 ```
 
+### Service Provider Dependencies
+
+Từ phiên bản mới, ServiceProvider hỗ trợ quản lý dependencies giữa các provider:
+
+```go
+type DatabaseProvider struct{}
+
+func (p *DatabaseProvider) Register(app interface{}) {
+    // Đăng ký database connection
+    app.(*App).Singleton("db", func(c *di.Container) interface{} {
+        return &Database{}
+    })
+}
+
+func (p *DatabaseProvider) Boot(app interface{}) {
+    // Khởi tạo database
+}
+
+func (p *DatabaseProvider) Requires() []string {
+    // Provider này cần config provider được đăng ký trước
+    return []string{"config"}
+}
+
+func (p *DatabaseProvider) Providers() []string {
+    // Provider này cung cấp các service
+    return []string{"db", "db.migrator"}
+}
+
+// Sử dụng RegisterWithDependencies để tự động sắp xếp thứ tự
+app.RegisterWithDependencies() // Tự động đăng ký theo đúng thứ tự dependency
+```
+
 ### Mocks cho Testing
 
 Package này cung cấp sẵn các mock cho các interface chính (trong thư mục `mocks/`):
-- Application
-- ServiceProvider
+- Application (bao gồm RegisterWithDependencies)
+- ServiceProvider (bao gồm Requires, Providers)
 - ServiceProviderDeferred
 - ModuleLoaderContract
 
@@ -110,6 +143,12 @@ func TestMyService(t *testing.T) {
     
     // Thiết lập mock behavior
     mockApp.On("Make", "config").Return("test-config", nil)
+    mockApp.On("RegisterWithDependencies").Return(nil)
+    
+    // Mock cho ServiceProvider với dependencies
+    mockProvider := new(mocks.ServiceProvider)
+    mockProvider.On("Requires").Return([]string{"config"})
+    mockProvider.On("Providers").Return([]string{"database", "cache"})
     
     // Sử dụng mock trong test
     service := NewMyService(mockApp)
@@ -117,6 +156,7 @@ func TestMyService(t *testing.T) {
     
     // Kiểm tra mock được gọi đúng cách
     mockApp.AssertExpectations(t)
+    mockProvider.AssertExpectations(t)
 }
 ```
 

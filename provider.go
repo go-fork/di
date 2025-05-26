@@ -32,4 +32,32 @@ type ServiceProvider interface {
 	// app: interface{} — ứng dụng chính hoặc struct có Container().
 	// Có thể panic nếu khởi tạo thất bại.
 	Boot(app interface{})
+
+	// Requires trả về danh sách các provider mà provider này phụ thuộc vào.
+	//
+	// Trả về:
+	//   - []string: Mảng các tên providers mà provider này yêu cầu phải được khởi tạo trước.
+	//
+	// Mục đích:
+	//   - Đảm bảo các dependency providers được đăng ký và boot trước provider hiện tại.
+	//   - Cho phép framework sắp xếp thứ tự khởi tạo providers một cách tự động.
+	//
+	// Ví dụ:
+	//   - Provider "middleware.compression" có thể yêu cầu "web.app" đã được khởi tạo.
+	Requires() []string
+
+	// Providers trả về danh sách các service mà provider này đăng ký.
+	//
+	// Mục đích:
+	//   - Cho phép framework biết được provider này cung cấp những service nào.
+	//   - Hỗ trợ trong việc debug và kiểm tra các service đã được đăng ký.
+	//   - Có thể dùng để tự động tạo documentation về các service có sẵn.
+	//
+	// Trả về:
+	//   - []string: Mảng các tên services mà provider này đăng ký vào container.
+	//
+	// Ví dụ:
+	//   - Provider "database" có thể trả về ["db.connection", "db.migrator"].
+	//   - Provider "cache" có thể trả về ["cache.redis", "cache.memory"].
+	Providers() []string
 }

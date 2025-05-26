@@ -1,21 +1,27 @@
 # Changelog
 
 Tất cả các thay đổi đáng chú ý của dự án go-fork/di sẽ được ghi lại trong file này.
-
 Định dạng dựa trên [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 và dự án này tuân theo [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.0.5] - 2025-05-26
 
 ### Added
 - Thêm method `Requires()` vào ServiceProvider interface để quản lý dependencies giữa các provider
 - Thêm method `Providers()` vào ServiceProvider interface để liệt kê các service được đăng ký
 - Thêm method `RegisterWithDependencies()` vào Application interface để tự động sắp xếp thứ tự đăng ký provider theo dependencies
 - Cập nhật mocks tương ứng cho tất cả các interface changes
-
-### Changed
 - Cải thiện dependency management với khả năng tự động phát hiện và sắp xếp thứ tự provider dependencies
 - Nâng cao khả năng debug và kiểm tra service registration thông qua method `Providers()`
+### Breaking Changes
+- ServiceProvider interface giờ yêu cầu implement thêm methods `Requires()` và `Providers()`
+
+## [0.0.4] - 2025-05-25
+### Changed
+- Thiết lập GitHub Actions cho CI/CD pipeline
+- Thêm .goreleaser.yml cho tự động release
 
 ## [0.0.3] - 2025-05-24
 ### Added

@@ -659,7 +659,10 @@ func TestDeferredProvider(t *testing.T) {
 
 	// Register và boot provider
 	provider.Register(container)
-	provider.Boot(container)
+	err := provider.Boot(container)
+	if err != nil {
+		t.Errorf("Boot() returned error: %v", err)
+	}
 
 	if !provider.RegisterCalled || !provider.BootCalled {
 		t.Error("DeferredProvider không gọi Register/Boot")

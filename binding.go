@@ -1,4 +1,3 @@
-// Package di cung cấp dependency injection container cho framework Fork.
 package di
 
 // BindingFunc là một hàm trả về một instance của dependency.

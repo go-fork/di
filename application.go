@@ -1,4 +1,3 @@
-// Package di cung cấp dependency injection container cho framework Fork.
 package di
 
 // Application định nghĩa interface cơ bản cho ứng dụng sử dụng DI container.

@@ -1,7 +1,3 @@
-// Package di cung cấp dependency injection container cho framework Fork.
-//
-// Container quản lý tất cả các dependencies và cung cấp các phương thức để
-// đăng ký, resolve và bind các dependency.
 package di
 
 import (

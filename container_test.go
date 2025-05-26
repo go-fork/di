@@ -669,7 +669,7 @@ func TestDeferredProvider(t *testing.T) {
 	}
 
 	// Gọi DeferredBoot
-	err := provider.DeferredBoot(container)
+	err = provider.DeferredBoot(container)
 
 	if err != nil || !provider.DeferredBootCalled {
 		t.Error("DeferredProvider.DeferredBoot() không hoạt động đúng")

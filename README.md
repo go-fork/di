@@ -13,7 +13,7 @@ Một container Dependency Injection (DI) hiện đại, nhẹ nhàng cho Go, l�
 ## Cài đặt
 
 ```
-go get github.com/go-fork/di
+go get go.fork.vn/di
 ```
 
 ## Sử dụng
@@ -21,7 +21,7 @@ go get github.com/go-fork/di
 ### Cơ bản
 
 ```go
-import "github.com/go-fork/di"
+import "go.fork.vn/di"
 
 container := di.New()
 container.Bind("service", func(c *di.Container) interface{} {
@@ -133,7 +133,7 @@ Package này cung cấp sẵn các mock cho các interface chính (trong thư m�
 ```go
 import (
     "testing"
-    "github.com/go-fork/di/mocks"
+    "go.fork.vn/di/mocks"
     "github.com/stretchr/testify/mock"
 )
 

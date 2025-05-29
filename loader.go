@@ -1,4 +1,3 @@
-// Package di cung cấp dependency injection container cho framework Fork.
 package di
 
 // ModuleLoaderContract định nghĩa contract cho các loader chịu trách nhiệm nạp module/service provider vào ứng dụng.

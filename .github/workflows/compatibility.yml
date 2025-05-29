@@ -92,13 +92,13 @@ jobs:
           mkdir -p /tmp/test-module
           cd /tmp/test-module
           go mod init test-module
-          go get github.com/go-fork/di@${{ github.sha }}
+          go get go.fork.vn/di@${{ github.sha }}
           cat > main.go << 'EOF'
           package main
           
           import (
               "fmt"
-              "github.com/go-fork/di"
+              "go.fork.vn/di"
           )
           
           type Service struct {

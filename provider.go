@@ -1,4 +1,3 @@
-// Package di cung cấp dependency injection container cho framework Fork.
 package di
 
 // ServiceProvider định nghĩa contract cho các service provider trong hệ thống DI.

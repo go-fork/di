@@ -32,8 +32,8 @@ jobs:
           go mod init example-di-project
           
           # Add local dependency
-          go mod edit -replace github.com/go-fork/di=${{ github.workspace }}
-          go get github.com/go-fork/di
+          go mod edit -replace go.fork.vn/di=${{ github.workspace }}
+          go get go.fork.vn/di
           
           # Create basic example
           cat > main.go << 'EOF'
@@ -42,7 +42,7 @@ jobs:
           import (
               "fmt"
               "log"
-              "github.com/go-fork/di"
+              "go.fork.vn/di"
           )
           
           type Database interface {
@@ -103,7 +103,7 @@ jobs:
           
           import (
               "fmt"
-              "github.com/go-fork/di"
+              "go.fork.vn/di"
           )
           
           type Logger interface {

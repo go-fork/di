@@ -21,7 +21,7 @@ Các mock object này giúp:
 ```go
 import (
 	"testing"
-	"github.com/go-fork/di/mocks"
+	"go.fork.vn/di/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )

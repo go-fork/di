@@ -100,7 +100,7 @@ linters-settings:
         disabled: true
         
   goimports:
-    local-prefixes: github.com/go-fork/di
+    local-prefixes: go.fork.vn/di
     
   gofumpt:
     extra-rules: true
@@ -109,7 +109,7 @@ linters-settings:
     sections:
       - standard
       - default
-      - prefix(github.com/go-fork/di)
+      - prefix(go.fork.vn/di)
     skip-generated: true
     
   godot:

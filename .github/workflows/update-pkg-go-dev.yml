@@ -30,7 +30,7 @@ jobs:
           echo "Latest tag: $LATEST_TAG"
           
           # Fetch the module on pkg.go.dev using the proxy
-          MODULE_PATH="github.com/go-fork/di"
+          MODULE_PATH="go.fork.vn/di"
           
           echo "Fetching $MODULE_PATH@$LATEST_TAG on pkg.go.dev..."
           

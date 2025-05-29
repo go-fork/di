@@ -1,4 +1,3 @@
-// Package di cung cấp dependency injection container cho framework Fork.
 package di
 
 // ServiceProviderDeferred mở rộng ServiceProvider cho các dịch vụ cần deferred boot.

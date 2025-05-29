@@ -43,13 +43,13 @@
 ### Installation
 
 ```bash
-go get github.com/go-fork/di@v${version}
+go get go.fork.vn/di@v${version}
 ```
 
 ### Verification
 
 ```bash
-go mod download github.com/go-fork/di@v${version}
+go mod download go.fork.vn/di@v${version}
 go mod verify
 ```
 

@@ -1,4 +1,4 @@
-module github.com/go-fork/di
+module go.fork.vn/di
 
 go 1.23.9
 

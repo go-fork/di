@@ -1,10 +1,39 @@
 # Changelog
 
-Tất cả các thay đổi đáng chú ý của dự án go-fork/di sẽ được ghi lại trong file này.
+Tất cả các thay đổi đáng chú ý của dự án go.fork.vn/di sẽ được ghi lại trong file này.
 Định dạng dựa trên [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 và dự án này tuân theo [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.1.0] - 2025-05-30
+
+### Added
+- **🎉 First Official Release**: Fork framework DI container v0.1.0
+- Comprehensive technical documentation in Vietnamese for all components
+- Complete API documentation covering all interfaces and methods
+- Production-ready implementation patterns and best practices
+
+### Changed
+- **BREAKING**: Package name changed from `github.com/go-fork/di` to `go.fork.vn/di`
+- All documentation updated to reflect new package name
+- Installation instructions updated for new import path
+
+### Documentation
+- Added comprehensive Vietnamese technical documentation:
+  - `docs/container.md`: Complete DI Container documentation
+  - `docs/application.md`: Application interface documentation  
+  - `docs/provider.md`: ServiceProvider interface documentation
+  - `docs/deferred.md`: ServiceProviderDeferred interface documentation
+  - `docs/loader.md`: ModuleLoaderContract documentation
+  - `docs/README.md`: Complete system overview and architecture guide
+- All documentation includes practical examples, best practices, and production patterns
+- Added detailed BindingFunc documentation with usage patterns
+
+### Migration
+- Update import statements from `github.com/go-fork/di` to `go.fork.vn/di`
+- Update mocks import from `github.com/go-fork/di/mocks` to `go.fork.vn/di/mocks`
+- No API changes - seamless transition for existing code
 
 ## [0.0.5] - 2025-05-26
 

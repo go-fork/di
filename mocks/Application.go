@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	di "github.com/go-fork/di"
+	di "go.fork.vn/di"
 	mock "github.com/stretchr/testify/mock"
 )
 

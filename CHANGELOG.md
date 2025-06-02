@@ -6,6 +6,28 @@ và dự án này tuân theo [Semantic Versioning](https://semver.org/spec/v2.0.
 
 ## [Unreleased]
 
+## [0.1.1] - 2025-06-02
+
+### Documentation
+- **Type Safety Improvements**: Migrated all `app interface{}` parameters to `app Application` across documentation
+  - Updated `docs/deferred.md` with 17+ method signatures using strongly typed Application interface
+  - Improved ServiceProvider and ServiceProviderDeferred interface documentation with proper typing
+  - Enhanced type safety examples and best practices
+- **Documentation Restructure**: 
+  - Replaced `docs/README.md` with `docs/index.md` for better documentation structure
+  - Created comprehensive `docs/overview.md` with detailed DI system architecture
+  - Added complete migration documentation in `docs/MIGRATION_COMPLETE.md`
+- **Enhanced Documentation Quality**:
+  - All method signatures now use proper Application interface typing
+  - Improved code examples with type-safe implementations
+  - Better documentation organization and navigation
+  - Maintained backward compatibility while improving type clarity
+
+### Technical Improvements
+- **Interface Consistency**: All interfaces now consistently use `Application` type instead of `interface{}`
+- **Type Safety**: Enhanced type safety across all ServiceProvider implementations
+- **Documentation Coverage**: Comprehensive documentation updates covering all recent changes
+
 ## [0.1.0] - 2025-05-30
 
 ### Added

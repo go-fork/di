@@ -37,18 +37,17 @@ type MockServiceProvider struct {
 }
 
 // Register implement ServiceProvider.Register
-func (p *MockServiceProvider) Register(app interface{}) {
+func (p *MockServiceProvider) Register(app Application) {
 	p.RegisterCalled = true
 
-	if container, ok := extractContainer(app); ok {
-		container.Singleton("mock.service", func(c *Container) interface{} {
-			return NewMockService("mock-from-provider")
-		})
-	}
+	container := app.Container()
+	container.Singleton("mock.service", func(c *Container) interface{} {
+		return NewMockService("mock-from-provider")
+	})
 }
 
 // Boot implement ServiceProvider.Boot
-func (p *MockServiceProvider) Boot(app interface{}) error {
+func (p *MockServiceProvider) Boot(app Application) error {
 	p.BootCalled = true
 	return p.BootError
 }
@@ -71,7 +70,7 @@ type MockDeferredProvider struct {
 }
 
 // DeferredBoot implement ServiceProviderDeferred.DeferredBoot
-func (p *MockDeferredProvider) DeferredBoot(app interface{}) error {
+func (p *MockDeferredProvider) DeferredBoot(app Application) error {
 	p.DeferredBootCalled = true
 	return p.DeferredBootError
 }
@@ -625,10 +624,11 @@ func TestExtractContainer(t *testing.T) {
 // TestServiceProvider kiểm tra việc tích hợp với service provider
 func TestServiceProvider(t *testing.T) {
 	container := New()
+	app := &mockApp{container: container}
 	provider := &MockServiceProvider{}
 
 	// Register provider
-	provider.Register(container)
+	provider.Register(app)
 
 	if !provider.RegisterCalled {
 		t.Error("ServiceProvider.Register() không được gọi")
@@ -646,7 +646,7 @@ func TestServiceProvider(t *testing.T) {
 	}
 
 	// Boot provider
-	err = provider.Boot(container)
+	err = provider.Boot(app)
 	if err != nil || !provider.BootCalled {
 		t.Error("ServiceProvider.Boot() không hoạt động đúng")
 	}
@@ -655,11 +655,12 @@ func TestServiceProvider(t *testing.T) {
 // TestDeferredProvider kiểm tra deferred provider
 func TestDeferredProvider(t *testing.T) {
 	container := New()
+	app := &mockApp{container: container}
 	provider := &MockDeferredProvider{}
 
 	// Register và boot provider
-	provider.Register(container)
-	err := provider.Boot(container)
+	provider.Register(app)
+	err := provider.Boot(app)
 	if err != nil {
 		t.Errorf("Boot() returned error: %v", err)
 	}
@@ -669,7 +670,7 @@ func TestDeferredProvider(t *testing.T) {
 	}
 
 	// Gọi DeferredBoot
-	err = provider.DeferredBoot(container)
+	err = provider.DeferredBoot(app)
 
 	if err != nil || !provider.DeferredBootCalled {
 		t.Error("DeferredProvider.DeferredBoot() không hoạt động đúng")
@@ -677,7 +678,7 @@ func TestDeferredProvider(t *testing.T) {
 
 	// Kiểm tra lỗi DeferredBoot
 	provider.DeferredBootError = errors.New("deferred boot error")
-	err = provider.DeferredBoot(container)
+	err = provider.DeferredBoot(app)
 
 	if err == nil || err.Error() != "deferred boot error" {
 		t.Errorf("DeferredProvider không trả về lỗi đúng: %v", err)

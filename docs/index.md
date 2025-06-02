@@ -1,12 +1,20 @@
-# Tài liệu Kỹ thuật - Package go-fork/di
+# Tài liệu Kỹ thuật - Package go.fork.vn/di
 
 ## Tổng quan
 
-Package `go-fork/di` cung cấp hệ thống Dependency Injection (DI) hiện đại và linh hoạt cho Go framework. Hệ thống được thiết kế theo các nguyên tắc SOLID và patterns phổ biến trong các framework lớn như Laravel và Spring Boot.
+Package `go.fork.vn/di` cung cấp hệ thống Dependency Injection (DI) hiện đại và linh hoạt cho Go framework. Hệ thống được thiết kế theo các nguyên tắc SOLID và patterns phổ biến trong các framework lớn như Laravel và Spring Boot.
 
 ## Cấu trúc Tài liệu
 
-### 1. [Container](container.md) 
+### 1. [Tổng quan](overview.md)
+**Mô tả:** Tổng quan về hệ thống Dependency Injection  
+**Nội dung chính:**
+- Kiến trúc và design patterns
+- Core components và relationships
+- Workflow và lifecycle management
+- Performance và best practices
+
+### 2. [Container](container.md) 
 **File nguồn:** `container.go`  
 **Mô tả:** DI Container - thành phần cốt lõi quản lý toàn bộ dependencies  
 **Nội dung chính:**
@@ -16,7 +24,7 @@ Package `go-fork/di` cung cấp hệ thống Dependency Injection (DI) hiện đ
 - Reflection-based injection (Call method)
 - Container utilities (Bound, Reset)
 
-### 2. [Application](application.md)
+### 3. [Application](application.md)
 **File nguồn:** `application.go`  
 **Mô tả:** Application interface - contract chuẩn cho ứng dụng sử dụng DI  
 **Nội dung chính:**
@@ -25,7 +33,7 @@ Package `go-fork/di` cung cấp hệ thống Dependency Injection (DI) hiện đ
 - Application lifecycle patterns
 - Framework integration strategies
 
-### 3. [ModuleLoader](loader.md)
+### 4. [ModuleLoader](loader.md)
 **File nguồn:** `loader.go`  
 **Mô tả:** ModuleLoaderContract - hệ thống load modules động  
 **Nội dung chính:**
@@ -34,7 +42,7 @@ Package `go-fork/di` cung cấp hệ thống Dependency Injection (DI) hiện đ
 - Plugin architecture support
 - Configuration-driven module management
 
-### 4. [ServiceProvider](provider.md)
+### 5. [ServiceProvider](provider.md)
 **File nguồn:** `provider.go`  
 **Mô tả:** ServiceProvider interface - pattern chuẩn cho việc tổ chức services  
 **Nội dung chính:**
@@ -43,7 +51,7 @@ Package `go-fork/di` cung cấp hệ thống Dependency Injection (DI) hiện đ
 - Provider dependency management
 - Enterprise-level implementation patterns
 
-### 5. [ServiceProviderDeferred](deferred.md)
+### 6. [ServiceProviderDeferred](deferred.md)
 **File nguồn:** `deferred.go`  
 **Mô tả:** ServiceProviderDeferred interface - hỗ trợ deferred operations  
 **Nội dung chính:**
@@ -121,8 +129,8 @@ container := di.New()
 
 // 2. Đăng ký provider
 provider := &DatabaseProvider{}
-provider.Register(container)
-provider.Boot(container)
+provider.Register(app)
+provider.Boot(app)
 
 // 3. Resolve dependencies
 db := container.MustMake("database").(*sql.DB)
@@ -185,4 +193,4 @@ Khi đóng góp vào tài liệu:
 
 ## License
 
-Tài liệu này tuân theo license của package go-fork/di.
+Tài liệu này tuân theo license của package go.fork.vn/di.

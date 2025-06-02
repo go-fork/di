@@ -1,6 +1,6 @@
-# Contributing to go-fork/di
+# Contributing to go.fork.vn/di
 
-Cảm ơn bạn đã quan tâm đến việc đóng góp cho dự án go-fork/di! Đây là một số hướng dẫn để giúp quá trình đóng góp trở nên suôn sẻ và hiệu quả.
+Cảm ơn bạn đã quan tâm đến việc đóng góp cho dự án go.fork.vn/di! Đây là một số hướng dẫn để giúp quá trình đóng góp trở nên suôn sẻ và hiệu quả.
 
 ## Quy trình đóng góp
 

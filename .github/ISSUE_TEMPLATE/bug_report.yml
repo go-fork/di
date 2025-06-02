@@ -1,5 +1,5 @@
 name: Bug report
-description: Tạo báo cáo lỗi để giúp chúng tôi cải thiện go-fork/di
+description: Tạo báo cáo lỗi để giúp chúng tôi cải thiện go.fork.vn/di
 title: "[BUG]: "
 labels: ["bug", "triage"]
 body:
@@ -43,7 +43,7 @@ body:
     id: version
     attributes:
       label: Phiên bản
-      description: Phiên bản go-fork/di bạn đang sử dụng
+      description: Phiên bản go.fork.vn/di bạn đang sử dụng
       placeholder: v1.0.0
     validations:
       required: true

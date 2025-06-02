@@ -56,13 +56,13 @@ graph TD
 ```go
 type ServiceProviderDeferred interface {
     ServiceProvider
-    DeferredBoot(app interface{})
+    DeferredBoot(app Application)
 }
 ```
 
 ServiceProviderDeferred kế thừa tất cả methods từ ServiceProvider:
-- `Register(app interface{})`
-- `Boot(app interface{})`
+- `Register(app Application)`
+- `Boot(app Application)`
 - `Requires() []string`
 - `Providers() []string`
 
@@ -71,7 +71,7 @@ Và bổ sung thêm method:
 ### DeferredBoot
 
 ```go
-DeferredBoot(app interface{})
+DeferredBoot(app Application)
 ```
 
 Được gọi sau khi HTTP request được xử lý xong và response đã được gửi về client.
@@ -83,7 +83,7 @@ DeferredBoot(app interface{})
 - Không nên chứa logic blocking hoặc time-consuming
 
 **Parameters**:
-- `app interface{}`: Application instance với đầy đủ services đã được khởi tạo
+- `app Application`: Application instance với đầy đủ services đã được khởi tạo
 
 **Timing**:
 - Được gọi sau khi response đã được gửi về client
@@ -109,25 +109,25 @@ type LoggingProvider struct {
     mu        sync.Mutex
 }
 
-func (p *LoggingProvider) Register(app interface{}) {
-    container := app.(Application).Container()
+func (p *LoggingProvider) Register(app Application) {
+    container := app.Container()
     
     container.Singleton("logger.deferred", func() interface{} {
         return NewDeferredLogger()
     })
 }
 
-func (p *LoggingProvider) Boot(app interface{}) {
+func (p *LoggingProvider) Boot(app Application) {
     // Standard boot operations
-    container := app.(Application).Container()
+    container := app.Container()
     logger := container.MustMake("logger.deferred").(DeferredLogger)
     
     // Setup logger configuration
     logger.SetLevel(LogLevelInfo)
 }
 
-func (p *LoggingProvider) DeferredBoot(app interface{}) {
-    container := app.(Application).Container()
+func (p *LoggingProvider) DeferredBoot(app Application) {
+    container := app.Container()
     logger := container.MustMake("logger.deferred").(DeferredLogger)
     
     // Flush log buffer to persistent storage
@@ -181,8 +181,8 @@ func NewBufferedLoggingProvider(bufferSize int) *BufferedLoggingProvider {
     }
 }
 
-func (p *BufferedLoggingProvider) Register(app interface{}) {
-    container := app.(Application).Container()
+func (p *BufferedLoggingProvider) Register(app Application) {
+    container := app.Container()
     
     container.Singleton("logger.buffered", func() interface{} {
         return &BufferedLogger{
@@ -192,14 +192,14 @@ func (p *BufferedLoggingProvider) Register(app interface{}) {
     })
 }
 
-func (p *BufferedLoggingProvider) Boot(app interface{}) {
+func (p *BufferedLoggingProvider) Boot(app Application) {
     // Start background flush worker
     go p.flushWorker()
 }
 
-func (p *BufferedLoggingProvider) DeferredBoot(app interface{}) {
+func (p *BufferedLoggingProvider) DeferredBoot(app Application) {
     // Add current request logs to buffer
-    container := app.(Application).Container()
+    container := app.Container()
     
     if requestLogger, err := container.Make("request.logger"); err == nil {
         logs := requestLogger.(RequestLogger).GetLogs()
@@ -318,8 +318,8 @@ func NewAnalyticsProvider(apiClient AnalyticsClient) *AnalyticsProvider {
     }
 }
 
-func (p *AnalyticsProvider) Register(app interface{}) {
-    container := app.(Application).Container()
+func (p *AnalyticsProvider) Register(app Application) {
+    container := app.Container()
     
     container.Singleton("analytics.tracker", func() interface{} {
         return &AnalyticsTracker{
@@ -334,16 +334,16 @@ func (p *AnalyticsProvider) Register(app interface{}) {
     })
 }
 
-func (p *AnalyticsProvider) Boot(app interface{}) {
-    container := app.(Application).Container()
+func (p *AnalyticsProvider) Boot(app Application) {
+    container := app.Container()
     collector := container.MustMake("analytics.collector").(*AnalyticsCollector)
     
     // Start event collection worker
     go p.eventCollectionWorker(collector.events)
 }
 
-func (p *AnalyticsProvider) DeferredBoot(app interface{}) {
-    container := app.(Application).Container()
+func (p *AnalyticsProvider) DeferredBoot(app Application) {
+    container := app.Container()
     
     // Collect request analytics data
     if requestData, err := container.Make("request.analytics"); err == nil {
@@ -470,8 +470,8 @@ func NewCacheMaintenanceProvider(interval time.Duration) *CacheMaintenanceProvid
     }
 }
 
-func (p *CacheMaintenanceProvider) Register(app interface{}) {
-    container := app.(Application).Container()
+func (p *CacheMaintenanceProvider) Register(app Application) {
+    container := app.Container()
     
     container.Singleton("cache.maintenance", func() interface{} {
         cacheManager := container.MustMake("cache.manager").(CacheManager)
@@ -482,8 +482,8 @@ func (p *CacheMaintenanceProvider) Register(app interface{}) {
     })
 }
 
-func (p *CacheMaintenanceProvider) Boot(app interface{}) {
-    container := app.(Application).Container()
+func (p *CacheMaintenanceProvider) Boot(app Application) {
+    container := app.Container()
     p.cacheManager = container.MustMake("cache.manager").(CacheManager)
     
     // Start maintenance worker
@@ -493,8 +493,8 @@ func (p *CacheMaintenanceProvider) Boot(app interface{}) {
     go p.periodicCleanup()
 }
 
-func (p *CacheMaintenanceProvider) DeferredBoot(app interface{}) {
-    container := app.(Application).Container()
+func (p *CacheMaintenanceProvider) DeferredBoot(app Application) {
+    container := app.Container()
     
     // Schedule cache operations based on request data
     if requestContext, err := container.Make("request.context"); err == nil {
@@ -629,8 +629,8 @@ func NewDatabaseCleanupProvider() *DatabaseCleanupProvider {
     }
 }
 
-func (p *DatabaseCleanupProvider) Register(app interface{}) {
-    container := app.(Application).Container()
+func (p *DatabaseCleanupProvider) Register(app Application) {
+    container := app.Container()
     
     container.Singleton("db.cleanup", func() interface{} {
         return &DatabaseCleanup{
@@ -640,8 +640,8 @@ func (p *DatabaseCleanupProvider) Register(app interface{}) {
     })
 }
 
-func (p *DatabaseCleanupProvider) Boot(app interface{}) {
-    container := app.(Application).Container()
+func (p *DatabaseCleanupProvider) Boot(app Application) {
+    container := app.Container()
     
     // Get database connections
     if db, err := container.Make("db.connection"); err == nil {
@@ -659,8 +659,8 @@ func (p *DatabaseCleanupProvider) Boot(app interface{}) {
     p.schedulePeriodicJobs()
 }
 
-func (p *DatabaseCleanupProvider) DeferredBoot(app interface{}) {
-    container := app.(Application).Container()
+func (p *DatabaseCleanupProvider) DeferredBoot(app Application) {
+    container := app.Container()
     
     // Schedule cleanup based on request activities
     if requestData, err := container.Make("request.db.operations"); err == nil {
@@ -818,7 +818,7 @@ type FallbackAction interface {
     Priority() int
 }
 
-func (p *ResilientDeferredProvider) DeferredBoot(app interface{}) {
+func (p *ResilientDeferredProvider) DeferredBoot(app Application) {
     defer func() {
         if r := recover(); r != nil {
             log.Printf("DeferredBoot panic recovered: %v", r)
@@ -877,7 +877,7 @@ func (p *ResilientDeferredProvider) executeFallbackActions(err error) {
 ```go
 type CircuitBreakerDeferredProvider struct {
     circuitBreaker *CircuitBreaker
-    fallbackFunc   func(app interface{}) error
+    fallbackFunc   func(app Application) error
 }
 
 type CircuitBreaker struct {
@@ -897,7 +897,7 @@ const (
     CircuitHalfOpen
 )
 
-func (p *CircuitBreakerDeferredProvider) DeferredBoot(app interface{}) {
+func (p *CircuitBreakerDeferredProvider) DeferredBoot(app Application) {
     if !p.circuitBreaker.AllowRequest() {
         log.Printf("Circuit breaker is open, using fallback")
         if p.fallbackFunc != nil {
@@ -961,29 +961,29 @@ func (cb *CircuitBreaker) RecordFailure() {
 
 ```go
 type MockDeferredProvider struct {
-    RegisterFunc     func(app interface{})
-    BootFunc         func(app interface{})
-    DeferredBootFunc func(app interface{})
+    RegisterFunc     func(app Application)
+    BootFunc         func(app Application)
+    DeferredBootFunc func(app Application)
     RequiresFunc     func() []string
     ProvidersFunc    func() []string
     CallLog          []string
 }
 
-func (m *MockDeferredProvider) Register(app interface{}) {
+func (m *MockDeferredProvider) Register(app Application) {
     m.CallLog = append(m.CallLog, "Register")
     if m.RegisterFunc != nil {
         m.RegisterFunc(app)
     }
 }
 
-func (m *MockDeferredProvider) Boot(app interface{}) {
+func (m *MockDeferredProvider) Boot(app Application) {
     m.CallLog = append(m.CallLog, "Boot")
     if m.BootFunc != nil {
         m.BootFunc(app)
     }
 }
 
-func (m *MockDeferredProvider) DeferredBoot(app interface{}) {
+func (m *MockDeferredProvider) DeferredBoot(app Application) {
     m.CallLog = append(m.CallLog, "DeferredBoot")
     if m.DeferredBootFunc != nil {
         m.DeferredBootFunc(app)
@@ -1009,7 +1009,7 @@ func TestDeferredProvider(t *testing.T) {
     app := NewTestApplication()
     
     mockProvider := &MockDeferredProvider{
-        DeferredBootFunc: func(app interface{}) {
+        DeferredBootFunc: func(app Application) {
             // Mock deferred operations
             log.Println("Mock deferred boot executed")
         },
@@ -1162,14 +1162,14 @@ func NewAsyncDeferredProvider(workers int) *AsyncDeferredProvider {
     }
 }
 
-func (p *AsyncDeferredProvider) Boot(app interface{}) {
+func (p *AsyncDeferredProvider) Boot(app Application) {
     // Start worker pool
     for i := 0; i < cap(p.workerPool); i++ {
         go p.worker()
     }
 }
 
-func (p *AsyncDeferredProvider) DeferredBoot(app interface{}) {
+func (p *AsyncDeferredProvider) DeferredBoot(app Application) {
     // Submit task to worker pool
     select {
     case p.taskQueue <- func() {
@@ -1213,7 +1213,7 @@ type Batcher struct {
     timer     *time.Timer
 }
 
-func (p *BatchedDeferredProvider) DeferredBoot(app interface{}) {
+func (p *BatchedDeferredProvider) DeferredBoot(app Application) {
     // Check rate limit
     if !p.rateLimiter.Allow() {
         log.Printf("Rate limit exceeded, skipping deferred operation")
@@ -1277,7 +1277,7 @@ type TimeoutDeferredProvider struct {
     operationMap   map[string]time.Duration
 }
 
-func (p *TimeoutDeferredProvider) DeferredBoot(app interface{}) {
+func (p *TimeoutDeferredProvider) DeferredBoot(app Application) {
     operations := []struct {
         name string
         fn   func(context.Context) error
@@ -1323,7 +1323,7 @@ type ResourceManagedDeferredProvider struct {
     maxResources   int64
 }
 
-func (p *ResourceManagedDeferredProvider) DeferredBoot(app interface{}) {
+func (p *ResourceManagedDeferredProvider) DeferredBoot(app Application) {
     // Check resource availability
     current := atomic.LoadInt64(&p.activeResources)
     if current >= p.maxResources {
@@ -1375,7 +1375,7 @@ type DeferredMetrics struct {
     mu                sync.RWMutex
 }
 
-func (p *MonitoredDeferredProvider) DeferredBoot(app interface{}) {
+func (p *MonitoredDeferredProvider) DeferredBoot(app Application) {
     start := time.Now()
     
     defer func() {

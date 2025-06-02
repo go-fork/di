@@ -3,8 +3,9 @@
 // # Tổng quan
 //
 // Package này hiện thực DI Container chuẩn, lấy cảm hứng từ các framework lớn (Laravel, Spring), tối ưu cho Go:
-//   - Tuân thủ SOLID, separation of concerns, dependency inversion.
+//   - Tuân thủ SOLID principles, separation of concerns, dependency inversion.
 //   - Hỗ trợ Service-Repository pattern, Adapter pattern, Service Provider pattern.
+//   - Type-safe interfaces, loại bỏ type assertion và runtime casting.
 //   - Cho phép mở rộng, kiểm soát, testability và maintainability tối đa cho ứng dụng Go.
 //
 // # Thành phần chính
@@ -45,8 +46,8 @@
 // # Service Provider Pattern
 //
 //	type MyProvider struct{}
-//	func (p *MyProvider) Register(app interface{}) { ... }
-//	func (p *MyProvider) Boot(app interface{})     { ... }
+//	func (p *MyProvider) Register(app Application) { ... }
+//	func (p *MyProvider) Boot(app Application)     { ... }
 //
 // # Lưu ý
 //

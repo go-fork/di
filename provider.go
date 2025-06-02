@@ -5,13 +5,15 @@ package di
 // Mục đích:
 //   - Cho phép module hoặc package đăng ký các dịch vụ, binding vào container một cách mô-đun.
 //   - Tách biệt logic khởi tạo, cấu hình dịch vụ khỏi phần còn lại của ứng dụng.
+//   - Tuân thủ SOLID principles với type-safe contract.
 //
 // Tính năng:
 //   - Đăng ký các binding, singleton, instance vào container.
 //   - Thực hiện các thao tác khởi tạo bổ sung sau khi đăng ký (Boot).
+//   - Type-safe interface, không cần type assertion.
 //
 // Tham số:
-//   - app: interface{} — Thường là ứng dụng chính hoặc struct có method Container() *Container.
+//   - app: Application — ứng dụng với DI container và lifecycle management.
 //
 // Trả về:
 //   - Không trả về giá trị, nhưng có thể panic nếu đăng ký binding lỗi.
@@ -19,18 +21,19 @@ package di
 // Lưu ý:
 //   - Register phải idempotent (gọi nhiều lần không gây lỗi trạng thái).
 //   - Boot có thể dùng để khởi tạo tài nguyên phụ thuộc vào các binding đã đăng ký.
+//   - Tuân thủ Dependency Inversion Principle với typed contract.
 type ServiceProvider interface {
 	// Register đăng ký các bindings vào container.
 	//
-	// app: interface{} — ứng dụng chính hoặc struct có Container().
+	// app: Application — ứng dụng với DI container và lifecycle management.
 	// Có thể panic nếu binding không hợp lệ.
-	Register(app interface{})
+	Register(app Application)
 
 	// Boot được gọi sau khi tất cả các service provider đã được đăng ký.
 	//
-	// app: interface{} — ứng dụng chính hoặc struct có Container().
+	// app: Application — ứng dụng với DI container đã được setup đầy đủ.
 	// Có thể panic nếu khởi tạo thất bại.
-	Boot(app interface{})
+	Boot(app Application)
 
 	// Requires trả về danh sách các provider mà provider này phụ thuộc vào.
 	//

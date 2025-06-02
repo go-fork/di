@@ -1,12 +1,12 @@
 name: Feature request
-description: Đề xuất một ý tưởng cho go-fork/di
+description: Đề xuất một ý tưởng cho go.fork.vn/di
 title: "[FEATURE]: "
 labels: ["enhancement"]
 body:
   - type: markdown
     attributes:
       value: |
-        Cảm ơn bạn đã quan tâm đến việc cải thiện go-fork/di!
+        Cảm ơn bạn đã quan tâm đến việc cải thiện go.fork.vn/di!
   - type: textarea
     id: problem
     attributes:

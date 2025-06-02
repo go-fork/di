@@ -2,7 +2,7 @@
 
 ## Phiên bản được hỗ trợ
 
-Những phiên bản sau đây của go-fork/di đang được hỗ trợ với các bản cập nhật bảo mật:
+Những phiên bản sau đây của go.fork.vn/di đang được hỗ trợ với các bản cập nhật bảo mật:
 
 | Phiên bản | Hỗ trợ            |
 | --------- | ------------------ |
@@ -11,7 +11,7 @@ Những phiên bản sau đây của go-fork/di đang được hỗ trợ với 
 
 ## Báo cáo lỗ hổng bảo mật
 
-Chúng tôi rất coi trọng bảo mật. Nếu bạn phát hiện lỗ hổng bảo mật trong go-fork/di, vui lòng **không** báo cáo lỗ hổng 
+Chúng tôi rất coi trọng bảo mật. Nếu bạn phát hiện lỗ hổng bảo mật trong go.fork.vn/di, vui lòng **không** báo cáo lỗ hổng 
 thông qua issue tracker của GitHub. Thay vào đó, vui lòng gửi email đến địa chỉ:
 
 **security@gofork.dev**
@@ -29,4 +29,4 @@ Chúng tôi sẽ phản hồi báo cáo của bạn càng sớm càng tốt, th�
 2. Chúng tôi sẽ phát triển và kiểm tra một bản vá
 3. Chúng tôi sẽ phát hành bản vá và công bố lỗ hổng sau khi người dùng có cơ hội cập nhật
 
-Chúng tôi đánh giá cao sự hỗ trợ của bạn trong việc giữ an toàn cho go-fork/di và người dùng của nó.
+Chúng tôi đánh giá cao sự hỗ trợ của bạn trong việc giữ an toàn cho go.fork.vn/di và người dùng của nó.

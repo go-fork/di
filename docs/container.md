@@ -546,13 +546,12 @@ container.Singleton("large-cache", func(c *di.Container) interface{} {
 ```go
 type DatabaseProvider struct{}
 
-func (p *DatabaseProvider) Register(app interface{}) {
-    if container, ok := app.(*Container); ok {
-        container.Singleton("database", func(c *di.Container) interface{} {
-            config := c.MustMake("config").(*Config)
-            return database.Connect(config.DatabaseURL)
-        })
-    }
+func (p *DatabaseProvider) Register(app Application) {
+    container := app.Container()
+    container.Singleton("database", func(c *di.Container) interface{} {
+        config := c.MustMake("config").(*Config)
+        return database.Connect(config.DatabaseURL)
+    })
 }
 ```
 

@@ -6,6 +6,31 @@ và dự án này tuân theo [Semantic Versioning](https://semver.org/spec/v2.0.
 
 ## [Unreleased]
 
+## [0.1.2] - 2025-06-02
+
+### Added
+- **Container Interface**: Chuyển đổi container từ struct sang interface
+  - Cải thiện khả năng testing với dependency injection
+  - Hỗ trợ nhiều container implementations tùy chỉnh
+  - Tuân theo Dependency Inversion Principle triệt để hơn
+- **Regenerated Mocks**: Cập nhật tất cả mock objects để tương thích với Container interface mới
+  - Cập nhật mocks.Container để implement interface mới
+  - Cải thiện khả năng mock testing
+  - Đảm bảo type safety trong tests
+
+### Documentation
+- **Interface Documentation**: Cập nhật tài liệu để phản ánh Container interface mới
+  - Cập nhật `docs/container.md` với Container interface
+  - Thêm hướng dẫn chuyển đổi và best practices
+  - Bổ sung testing patterns với Container interface
+- **Migration Guide**: Tạo MIGRATION_v0.1.2.md với hướng dẫn chi tiết về việc cập nhật
+- **Release Notes**: Tạo RELEASE_NOTES_v0.1.2.md với thông tin về phiên bản mới
+
+### Technical Improvements
+- **API Consistency**: Đảm bảo tất cả interface đều nhất quán và có tài liệu đầy đủ
+- **Type Safety**: Cải thiện type safety trong toàn bộ hệ thống DI
+- **Testing Support**: Triển khai mẫu để dễ dàng mock Container interface
+
 ## [0.1.1] - 2025-06-02
 
 ### Documentation

@@ -62,8 +62,8 @@ type Application interface {
 	// Mục đích:
 	//   - Cho phép truy cập trực tiếp vào dependency injection container để đăng ký hoặc resolve các dependency.
 	// Trả về:
-	//   - *Container: instance container hiện tại của ứng dụng.
-	Container() *Container
+	//   - Container: instance container hiện tại của ứng dụng.
+	Container() Container
 
 	// RegisterServiceProviders đăng ký tất cả các service provider đã cấu hình cho ứng dụng.
 	//

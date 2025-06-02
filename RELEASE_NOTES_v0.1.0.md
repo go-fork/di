@@ -116,7 +116,7 @@ container.Bind("service", func(c *Container) interface{} {
 
 // Configuration-based
 container.Bind("database", func(c *Container) interface{} {
-    config := c.MustMake("config").(*Config)
+    config := c.MustMake("config").(config.Config)
     return database.Connect(config.DSN)
 })
 ```

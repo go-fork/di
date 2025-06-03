@@ -40,7 +40,7 @@ Two-phase initialization (Register → Boot) đảm bảo proper dependency reso
 ### Register
 
 ```go
-Register(app interface{})
+Register(app Application)
 ```
 
 Đăng ký các bindings vào DI container.
@@ -50,9 +50,10 @@ Register(app interface{})
 - Đăng ký tất cả services mà provider cung cấp vào container
 - Không nên thực hiện initialization logic phức tạp
 - Phải idempotent (có thể gọi nhiều lần an toàn)
+- Type-safe interface, không cần type assertion
 
 **Parameters**:
-- `app interface{}`: Application instance hoặc struct có method `Container()` để truy cập DI container
+- `app Application`: Application instance với typed interface cho DI container access
 
 **Behavior**:
 - Đăng ký bindings, singletons, instances vào container
@@ -64,8 +65,8 @@ Register(app interface{})
 ```go
 type DatabaseProvider struct {}
 
-func (p *DatabaseProvider) Register(app interface{}) {
-    container := app.(Application).Container()
+func (p *DatabaseProvider) Register(app Application) {
+    container := app.Container()
     
     // Đăng ký database connection factory
     container.Singleton("db.connection", func() interface{} {
@@ -90,7 +91,7 @@ func (p *DatabaseProvider) Register(app interface{}) {
 ### Boot
 
 ```go
-Boot(app interface{})
+Boot(app Application)
 ```
 
 Được gọi sau khi tất cả các service provider đã được đăng ký.
@@ -100,9 +101,10 @@ Boot(app interface{})
 - Thực hiện initialization logic phức tạp
 - Có thể sử dụng các services đã được đăng ký bởi providers khác
 - Thích hợp cho việc setup middleware, event listeners, scheduled tasks
+- Type-safe interface, không cần type assertion
 
 **Parameters**:
-- `app interface{}`: Application instance với đầy đủ services đã được đăng ký
+- `app Application`: Application instance với đầy đủ services đã được đăng ký
 
 **Timing**:
 - Được gọi sau khi tất cả providers đã hoàn thành Register phase
@@ -119,8 +121,8 @@ Boot(app interface{})
 
 **Ví dụ Implementation**:
 ```go
-func (p *DatabaseProvider) Boot(app interface{}) {
-    container := app.(Application).Container()
+func (p *DatabaseProvider) Boot(app Application) {
+    container := app.Container()
     
     // Run database migrations
     migrator := container.MustMake("db.migrator").(Migrator)
@@ -272,8 +274,8 @@ func NewConfigProvider(configPath string) *ConfigProvider {
     }
 }
 
-func (p *ConfigProvider) Register(app interface{}) {
-    container := app.(Application).Container()
+func (p *ConfigProvider) Register(app Application) {
+    container := app.Container()
     
     // Register config as singleton
     container.Singleton("config", func() interface{} {
@@ -291,9 +293,9 @@ func (p *ConfigProvider) Register(app interface{}) {
     })
 }
 
-func (p *ConfigProvider) Boot(app interface{}) {
+func (p *ConfigProvider) Boot(app Application) {
     // Validate configuration
-    container := app.(Application).Container()
+    container := app.Container()
     config := container.MustMake("config").(Config)
     
     if err := config.Validate(); err != nil {
@@ -334,8 +336,8 @@ func NewDatabaseProvider() *DatabaseProvider {
     }
 }
 
-func (p *DatabaseProvider) Register(app interface{}) {
-    container := app.(Application).Container()
+func (p *DatabaseProvider) Register(app Application) {
+    container := app.Container()
     
     // Register database connection factory
     container.Singleton("db.connection", func() interface{} {
@@ -368,8 +370,8 @@ func (p *DatabaseProvider) Register(app interface{}) {
     })
 }
 
-func (p *DatabaseProvider) Boot(app interface{}) {
-    container := app.(Application).Container()
+func (p *DatabaseProvider) Boot(app Application) {
+    container := app.Container()
     
     // Test database connection
     db := container.MustMake("db.connection").(Database)
@@ -415,8 +417,8 @@ func NewCacheProvider(enableRedis, enableMemory bool) *CacheProvider {
     }
 }
 
-func (p *CacheProvider) Register(app interface{}) {
-    container := app.(Application).Container()
+func (p *CacheProvider) Register(app Application) {
+    container := app.Container()
     
     // Register Redis cache if enabled
     if p.enableRedis {
@@ -454,8 +456,8 @@ func (p *CacheProvider) Register(app interface{}) {
     container.Alias("cache", "cache.manager")
 }
 
-func (p *CacheProvider) Boot(app interface{}) {
-    container := app.(Application).Container()
+func (p *CacheProvider) Boot(app Application) {
+    container := app.Container()
     cacheManager := container.MustMake("cache.manager").(CacheManager)
     
     // Test cache connections
@@ -518,8 +520,8 @@ func NewEventProvider() *EventProvider {
     }
 }
 
-func (p *EventProvider) Register(app interface{}) {
-    container := app.(Application).Container()
+func (p *EventProvider) Register(app Application) {
+    container := app.Container()
     
     // Register event bus
     container.Singleton("event.bus", func() interface{} {
@@ -539,8 +541,8 @@ func (p *EventProvider) Register(app interface{}) {
     })
 }
 
-func (p *EventProvider) Boot(app interface{}) {
-    container := app.(Application).Container()
+func (p *EventProvider) Boot(app Application) {
+    container := app.Container()
     bus := container.MustMake("event.bus").(EventBus)
     
     // Register pre-defined event handlers
@@ -592,8 +594,8 @@ type ResilientProvider struct {
     healthCheck     HealthChecker
 }
 
-func (p *ResilientProvider) Register(app interface{}) {
-    container := app.(Application).Container()
+func (p *ResilientProvider) Register(app Application) {
+    container := app.Container()
     
     // Primary service with fallback
     container.Singleton("service.primary", func() interface{} {
@@ -615,8 +617,8 @@ func (p *ResilientProvider) Register(app interface{}) {
     })
 }
 
-func (p *ResilientProvider) Boot(app interface{}) {
-    container := app.(Application).Container()
+func (p *ResilientProvider) Boot(app Application) {
+    container := app.Container()
     
     // Health check with graceful handling
     if service, err := container.Make("service.primary"); err == nil {
@@ -651,8 +653,8 @@ type ValidatedProvider struct {
 
 type Validator func(interface{}) error
 
-func (p *ValidatedProvider) Register(app interface{}) {
-    container := app.(Application).Container()
+func (p *ValidatedProvider) Register(app Application) {
+    container := app.Container()
     
     container.Singleton("validated.service", func() interface{} {
         config := container.MustMake("config").(Config)
@@ -700,8 +702,8 @@ func NewMockProvider() *MockProvider {
     }
 }
 
-func (p *MockProvider) Register(app interface{}) {
-    container := app.(Application).Container()
+func (p *MockProvider) Register(app Application) {
+    container := app.Container()
     
     for serviceName, mockService := range p.mockServices {
         container.Singleton(serviceName, func() interface{} {
@@ -710,7 +712,7 @@ func (p *MockProvider) Register(app interface{}) {
     }
 }
 
-func (p *MockProvider) Boot(app interface{}) {
+func (p *MockProvider) Boot(app Application) {
     // No-op for mock provider
 }
 
@@ -872,8 +874,8 @@ func NewLazyProvider() *LazyProvider {
     }
 }
 
-func (p *LazyProvider) Register(app interface{}) {
-    container := app.(Application).Container()
+func (p *LazyProvider) Register(app Application) {
+    container := app.Container()
     
     for serviceName, factory := range p.factories {
         // Create lazy wrapper
@@ -906,8 +908,8 @@ type CachedProvider struct {
     mu       sync.RWMutex
 }
 
-func (p *CachedProvider) Register(app interface{}) {
-    container := app.(Application).Container()
+func (p *CachedProvider) Register(app Application) {
+    container := app.Container()
     
     container.Singleton("expensive.service", func() interface{} {
         p.mu.RLock()
@@ -961,8 +963,8 @@ func (p *DatabaseProvider) Providers() []string {
 ```go
 type RobustProvider struct {}
 
-func (p *RobustProvider) Register(app interface{}) {
-    container := app.(Application).Container()
+func (p *RobustProvider) Register(app Application) {
+    container := app.Container()
     
     container.Singleton("robust.service", func() interface{} {
         // Validate dependencies first
@@ -988,7 +990,7 @@ func (p *RobustProvider) Register(app interface{}) {
     })
 }
 
-func (p *RobustProvider) Boot(app interface{}) {
+func (p *RobustProvider) Boot(app Application) {
     // Always use defensive programming
     defer func() {
         if r := recover(); r != nil {
@@ -997,7 +999,7 @@ func (p *RobustProvider) Boot(app interface{}) {
         }
     }()
     
-    container := app.(Application).Container()
+    container := app.Container()
     service := container.MustMake("robust.service").(RobustService)
     
     // Validate service health before marking as ready
@@ -1034,12 +1036,12 @@ func NewConfigurableProvider(config ProviderConfig) *ConfigurableProvider {
     return &ConfigurableProvider{config: config}
 }
 
-func (p *ConfigurableProvider) Register(app interface{}) {
+func (p *ConfigurableProvider) Register(app Application) {
     if !p.config.Enabled {
         return // Skip registration if disabled
     }
     
-    container := app.(Application).Container()
+    container := app.Container()
     
     for _, serviceConfig := range p.config.Services {
         if !serviceConfig.Enabled {
@@ -1082,8 +1084,8 @@ type Migration struct {
     Migrate func(Container) error
 }
 
-func (p *VersionedProvider) Register(app interface{}) {
-    container := app.(Application).Container()
+func (p *VersionedProvider) Register(app Application) {
+    container := app.Container()
     
     // Check version compatibility
     if appVersion := p.getAppVersion(container); appVersion != "" {
@@ -1131,8 +1133,8 @@ type Middleware interface {
     Handle(Context, func(Context)) error
 }
 
-func (p *MiddlewareProvider) Register(app interface{}) {
-    container := app.(Application).Container()
+func (p *MiddlewareProvider) Register(app Application) {
+    container := app.Container()
     
     // Register middleware factory
     container.Singleton("middleware.stack", func() interface{} {
@@ -1188,8 +1190,8 @@ type Sandbox interface {
     Execute(Plugin, func()) error
 }
 
-func (p *PluginProvider) Register(app interface{}) {
-    container := app.(Application).Container()
+func (p *PluginProvider) Register(app Application) {
+    container := app.Container()
     
     // Register plugin manager
     container.Singleton("plugin.manager", func() interface{} {
@@ -1220,8 +1222,8 @@ type MetricsProvider struct {
     registry MetricsRegistry
 }
 
-func (p *MetricsProvider) Register(app interface{}) {
-    container := app.(Application).Container()
+func (p *MetricsProvider) Register(app Application) {
+    container := app.Container()
     
     // Register metrics registry
     container.Singleton("metrics.registry", func() interface{} {
@@ -1241,8 +1243,8 @@ func (p *MetricsProvider) Register(app interface{}) {
     })
 }
 
-func (p *MetricsProvider) Boot(app interface{}) {
-    container := app.(Application).Container()
+func (p *MetricsProvider) Boot(app Application) {
+    container := app.Container()
     collector := container.MustMake("metrics.collector").(MetricsCollector)
     
     // Start metrics collection
@@ -1267,8 +1269,8 @@ type TracingProvider struct {
     config TracingConfig
 }
 
-func (p *TracingProvider) Register(app interface{}) {
-    container := app.(Application).Container()
+func (p *TracingProvider) Register(app Application) {
+    container := app.Container()
     
     container.Singleton("tracer", func() interface{} {
         return p.tracer

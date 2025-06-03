@@ -6,6 +6,53 @@ và dự án này tuân theo [Semantic Versioning](https://semver.org/spec/v2.0.
 
 ## [Unreleased]
 
+## [0.1.2] - 2025-06-02
+
+### Added
+- **Container Interface**: Chuyển đổi container từ struct sang interface
+  - Cải thiện khả năng testing với dependency injection
+  - Hỗ trợ nhiều container implementations tùy chỉnh
+  - Tuân theo Dependency Inversion Principle triệt để hơn
+- **Regenerated Mocks**: Cập nhật tất cả mock objects để tương thích với Container interface mới
+  - Cập nhật mocks.Container để implement interface mới
+  - Cải thiện khả năng mock testing
+  - Đảm bảo type safety trong tests
+
+### Documentation
+- **Interface Documentation**: Cập nhật tài liệu để phản ánh Container interface mới
+  - Cập nhật `docs/container.md` với Container interface
+  - Thêm hướng dẫn chuyển đổi và best practices
+  - Bổ sung testing patterns với Container interface
+- **Migration Guide**: Tạo MIGRATION_v0.1.2.md với hướng dẫn chi tiết về việc cập nhật
+- **Release Notes**: Tạo RELEASE_NOTES_v0.1.2.md với thông tin về phiên bản mới
+
+### Technical Improvements
+- **API Consistency**: Đảm bảo tất cả interface đều nhất quán và có tài liệu đầy đủ
+- **Type Safety**: Cải thiện type safety trong toàn bộ hệ thống DI
+- **Testing Support**: Triển khai mẫu để dễ dàng mock Container interface
+
+## [0.1.1] - 2025-06-02
+
+### Documentation
+- **Type Safety Improvements**: Migrated all `app interface{}` parameters to `app Application` across documentation
+  - Updated `docs/deferred.md` with 17+ method signatures using strongly typed Application interface
+  - Improved ServiceProvider and ServiceProviderDeferred interface documentation with proper typing
+  - Enhanced type safety examples and best practices
+- **Documentation Restructure**: 
+  - Replaced `docs/README.md` with `docs/index.md` for better documentation structure
+  - Created comprehensive `docs/overview.md` with detailed DI system architecture
+  - Added complete migration documentation in `docs/MIGRATION_COMPLETE.md`
+- **Enhanced Documentation Quality**:
+  - All method signatures now use proper Application interface typing
+  - Improved code examples with type-safe implementations
+  - Better documentation organization and navigation
+  - Maintained backward compatibility while improving type clarity
+
+### Technical Improvements
+- **Interface Consistency**: All interfaces now consistently use `Application` type instead of `interface{}`
+- **Type Safety**: Enhanced type safety across all ServiceProvider implementations
+- **Documentation Coverage**: Comprehensive documentation updates covering all recent changes
+
 ## [0.1.0] - 2025-05-30
 
 ### Added

@@ -97,14 +97,14 @@ Từ phiên bản mới, ServiceProvider hỗ trợ quản lý dependencies gi�
 ```go
 type DatabaseProvider struct{}
 
-func (p *DatabaseProvider) Register(app interface{}) {
+func (p *DatabaseProvider) Register(app di.Application) {
     // Đăng ký database connection
-    app.(*App).Singleton("db", func(c *di.Container) interface{} {
+    app.Singleton("db", func(c *di.Container) interface{} {
         return &Database{}
     })
 }
 
-func (p *DatabaseProvider) Boot(app interface{}) {
+func (p *DatabaseProvider) Boot(app di.Application) {
     // Khởi tạo database
 }
 

@@ -6,11 +6,47 @@ import (
 	"sync"
 )
 
-// Container là "trái tim" của hệ thống Dependency Injection (DI) trong Fork framework.
+// Container là interface của hệ thống Dependency Injection (DI) trong Fork framework.
+//
+// Container định nghĩa tất cả các phương thức cần thiết cho việc bind, resolve, và quản lý
+// các dependency trong ứng dụng. Interface này cho phép dễ dàng mock trong các tests.
+type Container interface {
+	// Bind đăng ký một binding (factory function) cho abstract type.
+	Bind(abstract string, concrete BindingFunc)
+
+	// BindIf đăng ký binding chỉ khi chưa tồn tại.
+	BindIf(abstract string, concrete BindingFunc) bool
+
+	// Singleton đăng ký binding singleton (chỉ tạo một instance duy nhất).
+	Singleton(abstract string, concrete BindingFunc)
+
+	// Instance đăng ký một instance đã khởi tạo sẵn.
+	Instance(abstract string, instance interface{})
+
+	// Alias đăng ký một alias cho abstract type.
+	Alias(abstract, alias string)
+
+	// Make resolve một dependency từ container.
+	Make(abstract string) (interface{}, error)
+
+	// MustMake resolve một dependency, panic nếu lỗi.
+	MustMake(abstract string) interface{}
+
+	// Bound kiểm tra một abstract đã được đăng ký binding/instance/alias chưa.
+	Bound(abstract string) bool
+
+	// Reset xóa toàn bộ binding, instance, alias khỏi container.
+	Reset()
+
+	// Call gọi một hàm và tự động resolve các dependency qua reflection.
+	Call(callback interface{}, additionalParams ...interface{}) ([]interface{}, error)
+}
+
+// container là hiện thực cụ thể của Container interface.
 //
 // # Định nghĩa & Tiêu chuẩn
 //
-// Container là hiện thực chuẩn DI hiện đại, lấy cảm hứng từ các framework như Laravel, Spring, nhưng được tối ưu hóa cho Go:
+// container là hiện thực chuẩn DI hiện đại, lấy cảm hứng từ các framework như Laravel, Spring, nhưng được tối ưu hóa cho Go:
 //   - Tuân thủ nghiêm ngặt nguyên tắc SOLID, đặc biệt là Dependency Inversion Principle.
 //   - Đảm bảo separation of concerns: tách biệt logic khởi tạo, quản lý vòng đời, và resolve dependency.
 //   - Hỗ trợ Service-Repository pattern, Adapter pattern, Service Provider pattern.
@@ -25,12 +61,12 @@ import (
 //
 // # Định nghĩa cấu trúc
 //
-// Container quản lý các dependency thông qua các trường:
+// container quản lý các dependency thông qua các trường:
 //   - bindings: map[string]BindingFunc — ánh xạ abstract type (tên logic) tới factory function khởi tạo instance.
 //   - instances: map[string]interface{} — lưu trữ các singleton instance đã được khởi tạo.
 //   - aliases: map[string]string — ánh xạ alias tới abstract type gốc, hỗ trợ truy cập đa tên.
 //   - mu: sync.RWMutex — đảm bảo an toàn concurrent cho mọi thao tác đăng ký/resolve.
-type Container struct {
+type container struct {
 	// bindings chứa các factory function tạo dependency theo abstract type.
 	bindings map[string]BindingFunc
 
@@ -45,9 +81,9 @@ type Container struct {
 }
 
 // New khởi tạo một DI container rỗng, sẵn sàng cho việc đăng ký binding, instance, alias.
-// Trả về: *Container instance mới.
-func New() *Container {
-	return &Container{
+// Trả về: Container interface với hiện thực mặc định.
+func New() Container {
+	return &container{
 		bindings:  make(map[string]BindingFunc),
 		instances: make(map[string]interface{}),
 		aliases:   make(map[string]string),
@@ -63,7 +99,7 @@ func New() *Container {
 //   - concrete: BindingFunc — factory function nhận container, trả về instance.
 //   - Trả về: Không trả về.
 //   - Lỗi: Nếu abstract rỗng hoặc nil, panic hoặc silent error (tùy implement).
-func (c *Container) Bind(abstract string, concrete BindingFunc) {
+func (c *container) Bind(abstract string, concrete BindingFunc) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -76,7 +112,7 @@ func (c *Container) Bind(abstract string, concrete BindingFunc) {
 //   - Logic: Kiểm tra tồn tại, chỉ bind nếu chưa có.
 //   - Tham số: như Bind.
 //   - Trả về: true nếu đăng ký thành công, false nếu đã tồn tại.
-func (c *Container) BindIf(abstract string, concrete BindingFunc) bool {
+func (c *container) BindIf(abstract string, concrete BindingFunc) bool {
 	c.mu.RLock()
 	_, exists := c.bindings[abstract]
 	c.mu.RUnlock()
@@ -90,20 +126,25 @@ func (c *Container) BindIf(abstract string, concrete BindingFunc) bool {
 }
 
 // singletonResolver là hàm nội bộ xử lý logic của singleton để dễ test
-func (c *Container) singletonResolver(abstract string, concrete BindingFunc) interface{} {
+func (c *container) singletonResolver(abstract string, concrete BindingFunc) interface{} {
 	c.mu.RLock()
 	instance, exists := c.instances[abstract]
 	c.mu.RUnlock()
 
-	if exists {
+	if exists && instance != nil {
+		return instance
+	}
+
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	// Double-check pattern: check again after acquiring write lock
+	if instance, exists := c.instances[abstract]; exists {
 		return instance
 	}
 
 	instance = concrete(c)
-
-	c.mu.Lock()
 	c.instances[abstract] = instance
-	c.mu.Unlock()
 
 	return instance
 }
@@ -114,8 +155,8 @@ func (c *Container) singletonResolver(abstract string, concrete BindingFunc) int
 //   - Logic: Factory function được wrap lại, lưu instance vào map instances khi lần đầu resolve.
 //   - Tham số: như Bind.
 //   - Trả về: Không trả về.
-func (c *Container) Singleton(abstract string, concrete BindingFunc) {
-	c.Bind(abstract, func(c *Container) interface{} {
+func (c *container) Singleton(abstract string, concrete BindingFunc) {
+	c.Bind(abstract, func(container Container) interface{} {
 		return c.singletonResolver(abstract, concrete)
 	})
 }
@@ -128,7 +169,7 @@ func (c *Container) Singleton(abstract string, concrete BindingFunc) {
 //   - abstract: string — tên logic.
 //   - instance: interface{} — giá trị đã khởi tạo.
 //   - Trả về: Không trả về.
-func (c *Container) Instance(abstract string, instance interface{}) {
+func (c *container) Instance(abstract string, instance interface{}) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -143,7 +184,7 @@ func (c *Container) Instance(abstract string, instance interface{}) {
 //   - abstract: string — tên gốc.
 //   - alias: string — tên alias.
 //   - Trả về: Không trả về.
-func (c *Container) Alias(abstract, alias string) {
+func (c *container) Alias(abstract, alias string) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -159,7 +200,7 @@ func (c *Container) Alias(abstract, alias string) {
 //   - Trả về:
 //   - interface{}: instance đã resolve.
 //   - error: nếu không tìm thấy hoặc binding lỗi.
-func (c *Container) Make(abstract string) (interface{}, error) {
+func (c *container) Make(abstract string) (interface{}, error) {
 	return c.make(abstract)
 }
 
@@ -169,7 +210,7 @@ func (c *Container) Make(abstract string) (interface{}, error) {
 //   - Tham số: như Make.
 //   - Trả về: interface{} instance đã resolve.
 //   - Lỗi: panic nếu không resolve được.
-func (c *Container) MustMake(abstract string) interface{} {
+func (c *container) MustMake(abstract string) interface{} {
 	instance, err := c.make(abstract)
 	if err != nil {
 		panic(err)
@@ -178,7 +219,7 @@ func (c *Container) MustMake(abstract string) interface{} {
 }
 
 // make là hiện thực nội bộ của Make
-func (c *Container) make(abstract string) (interface{}, error) {
+func (c *container) make(abstract string) (interface{}, error) {
 	c.mu.RLock()
 	// Nếu có alias thì resolve alias trước
 	if alias, exists := c.aliases[abstract]; exists {
@@ -207,7 +248,7 @@ func (c *Container) make(abstract string) (interface{}, error) {
 //   - Mục đích: Hỗ trợ kiểm tra trạng thái container, phục vụ cho module động.
 //   - Tham số: abstract: string.
 //   - Trả về: true nếu đã đăng ký, false nếu chưa.
-func (c *Container) Bound(abstract string) bool {
+func (c *container) Bound(abstract string) bool {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 
@@ -222,7 +263,7 @@ func (c *Container) Bound(abstract string) bool {
 //
 //   - Mục đích: Làm sạch container, thường dùng cho test hoặc reload.
 //   - Trả về: Không trả về.
-func (c *Container) Reset() {
+func (c *container) Reset() {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -242,7 +283,7 @@ func (c *Container) Reset() {
 //   - []interface{}: kết quả trả về của callback.
 //   - error: nếu không resolve được tham số hoặc callback không hợp lệ.
 //   - Lỗi: Trả về error nếu callback không phải function, hoặc không resolve được dependency.
-func (c *Container) Call(callback interface{}, additionalParams ...interface{}) ([]interface{}, error) {
+func (c *container) Call(callback interface{}, additionalParams ...interface{}) ([]interface{}, error) {
 	callbackType := reflect.TypeOf(callback)
 	if callbackType.Kind() != reflect.Func {
 		return nil, fmt.Errorf("callback must be a function")

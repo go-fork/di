@@ -1,4 +1,4 @@
-# GoReleaser configuration for go-fork/di library
+# GoReleaser configuration for go.fork.vn/di library
 version: 2
 project_name: di
 dist: dist
@@ -93,7 +93,7 @@ release:
   header: |
     ## Release {{.Tag}} ({{.Date}})
     
-    Welcome to this new release of go-fork/di!
+    Welcome to this new release of go.fork.vn/di!
     
     **Full Changelog**: https://github.com/go-fork/di/compare/{{.PreviousTag}}...{{.Tag}}
   footer: |

@@ -25,10 +25,51 @@ Container tuân thủ nghiêm ngặt các nguyên tắc sau:
 
 ## Cấu trúc dữ liệu
 
-### Container Struct
+### Container Interface
+
+Từ version v0.1.2, `Container` là một interface thay vì struct cụ thể:
 
 ```go
-type Container struct {
+// Container là interface của hệ thống Dependency Injection (DI) trong Fork framework.
+type Container interface {
+    // Bind đăng ký một binding (factory function) cho abstract type.
+    Bind(abstract string, concrete BindingFunc)
+
+    // BindIf đăng ký binding chỉ khi chưa tồn tại.
+    BindIf(abstract string, concrete BindingFunc) bool
+
+    // Singleton đăng ký binding singleton (chỉ tạo một instance duy nhất).
+    Singleton(abstract string, concrete BindingFunc)
+
+    // Instance đăng ký một instance đã khởi tạo sẵn.
+    Instance(abstract string, instance interface{})
+
+    // Alias đăng ký một alias cho abstract type.
+    Alias(abstract, alias string)
+
+    // Make resolve một dependency từ container.
+    Make(abstract string) (interface{}, error)
+
+    // MustMake resolve một dependency, panic nếu lỗi.
+    MustMake(abstract string) interface{}
+
+    // Bound kiểm tra một abstract đã được đăng ký binding/instance/alias chưa.
+    Bound(abstract string) bool
+
+    // Reset xóa toàn bộ binding, instance, alias khỏi container.
+    Reset()
+
+    // Call gọi một hàm và tự động resolve các dependency qua reflection.
+    Call(callback interface{}, additionalParams ...interface{}) ([]interface{}, error)
+}
+```
+
+### Container Implementation (internal)
+
+Hiện thực nội bộ của Container interface:
+
+```go
+type container struct {
     bindings  map[string]BindingFunc  // Factory functions cho dependency
     instances map[string]interface{}  // Singleton instances đã khởi tạo
     aliases   map[string]string       // Alias mapping
@@ -39,7 +80,7 @@ type Container struct {
 ### BindingFunc Type
 
 ```go
-type BindingFunc func(c *Container) interface{}
+type BindingFunc func(c Container) interface{}
 ```
 
 `BindingFunc` là factory function được sử dụng để tạo ra instances của dependencies trong container. Đây là thành phần cốt lõi cho cơ chế dependency injection.
@@ -65,7 +106,7 @@ type BindingFunc func(c *Container) interface{}
 
 | Thuộc tính | Mô tả | Ví dụ |
 |------------|-------|-------|
-| **Signature** | `func(c *Container) interface{}` | Factory function chuẩn |
+| **Signature** | `func(c Container) interface{}` | Factory function chuẩn |
 | **Container Access** | Có thể resolve dependencies khác từ container | `c.MustMake("config")` |
 | **Lazy Loading** | Chỉ thực thi khi dependency được resolve | Tiết kiệm resources |
 | **Flexible Return** | Trả về `interface{}` - có thể là bất kỳ type nào | Struct, interface, primitive types |
@@ -75,12 +116,12 @@ type BindingFunc func(c *Container) interface{}
 
 ```go
 // 1. Simple factory - tạo instance mới
-container.Bind("logger", func(c *Container) interface{} {
+container.Bind("logger", func(c di.Container) interface{} {
     return &Logger{Level: "info"}
 })
 
 // 2. Dependency injection - resolve dependencies khác
-container.Bind("userService", func(c *Container) interface{} {
+container.Bind("userService", func(c di.Container) interface{} {
     repo := c.MustMake("userRepository").(UserRepository)
     logger := c.MustMake("logger").(Logger)
     
@@ -91,14 +132,14 @@ container.Bind("userService", func(c *Container) interface{} {
 })
 
 // 3. Configuration-based - sử dụng config để khởi tạo
-container.Bind("database", func(c *Container) interface{} {
-    config := c.MustMake("config").(*Config)
+container.Bind("database", func(c di.Container) interface{} {
+    config := c.MustMake("config").(config.Config)
     return database.Connect(config.DatabaseURL)
 })
 
 // 4. Conditional initialization - khởi tạo theo điều kiện
-container.Bind("cache", func(c *Container) interface{} {
-    config := c.MustMake("config").(*Config)
+container.Bind("cache", func(c di.Container) interface{} {
+    config := c.MustMake("config").(config.Config)
     if config.CacheEnabled {
         return cache.NewRedisCache(config.RedisURL)
     }
@@ -106,8 +147,8 @@ container.Bind("cache", func(c *Container) interface{} {
 })
 
 // 5. Complex initialization - khởi tạo phức tạp với multiple dependencies
-container.Bind("emailService", func(c *Container) interface{} {
-    config := c.MustMake("config").(*Config)
+container.Bind("emailService", func(c di.Container) interface{} {
+    config := c.MustMake("config").(config.Config)
     logger := c.MustMake("logger").(Logger)
     templateEngine := c.MustMake("templateEngine").(TemplateEngine)
     
@@ -129,12 +170,12 @@ container.Bind("emailService", func(c *Container) interface{} {
 
 ### Constructor
 
-#### `New() *Container`
+#### `New() Container`
 
 Khởi tạo một DI container rỗng, sẵn sàng cho việc đăng ký binding, instance, alias.
 
 **Trả về:**
-- `*Container`: Instance container mới được khởi tạo
+- `Container`: Container interface cho instance mới được khởi tạo
 
 **Ví dụ:**
 ```go
@@ -163,7 +204,7 @@ container.Bind("logger", func(c *di.Container) interface{} {
 })
 
 container.Bind("database", func(c *di.Container) interface{} {
-    config := c.MustMake("config").(*Config)
+    config := c.MustMake("config").(config.Config)
     return database.Connect(config.DSN)
 })
 ```
@@ -187,7 +228,7 @@ container.Bind("database", func(c *di.Container) interface{} {
 **Ví dụ:**
 ```go
 // Đăng ký default logger chỉ khi chưa có
-success := container.BindIf("logger", func(c *di.Container) interface{} {
+success := container.BindIf("logger", func(c di.Container) interface{} {
     return &DefaultLogger{}
 })
 ```
@@ -206,7 +247,7 @@ success := container.BindIf("logger", func(c *di.Container) interface{} {
 
 **Ví dụ:**
 ```go
-container.Singleton("database", func(c *di.Container) interface{} {
+container.Singleton("database", func(c di.Container) interface{} {
     return database.NewConnection("localhost:5432")
 })
 
@@ -251,7 +292,7 @@ container.Instance("logger", logger)
 
 **Ví dụ:**
 ```go
-container.Singleton("logger", func(c *di.Container) interface{} {
+container.Singleton("logger", func(c di.Container) interface{} {
     return &Logger{}
 })
 container.Alias("logger", "log")
@@ -335,7 +376,7 @@ if container.Bound("logger") {
 
 // Đăng ký conditional
 if !container.Bound("cache") {
-    container.Singleton("cache", func(c *di.Container) interface{} {
+    container.Singleton("cache", func(c di.Container) interface{} {
         return cache.NewMemoryCache()
     })
 }
@@ -426,12 +467,12 @@ go func() {
 
 ```go
 // Sử dụng interface names cho abstract types
-container.Bind("logger", func(c *di.Container) interface{} {
+container.Bind("logger", func(c di.Container) interface{} {
     return &StdLogger{}
 })
 
 // Hoặc service names rõ ràng
-container.Bind("user.repository", func(c *di.Container) interface{} {
+container.Bind("user.repository", func(c di.Container) interface{} {
     return &UserRepository{}
 })
 ```
@@ -440,7 +481,7 @@ container.Bind("user.repository", func(c *di.Container) interface{} {
 
 ```go
 // Resolve dependencies trong factory function
-container.Singleton("user.service", func(c *di.Container) interface{} {
+container.Singleton("user.service", func(c di.Container) interface{} {
     repo := c.MustMake("user.repository").(UserRepository)
     logger := c.MustMake("logger").(Logger)
     
@@ -479,7 +520,7 @@ func TestUserService(t *testing.T) {
     container.Instance("logger", mockLogger)
     
     // Test target
-    container.Singleton("user.service", func(c *di.Container) interface{} {
+    container.Singleton("user.service", func(c di.Container) interface{} {
         return &UserService{
             Repository: c.MustMake("user.repository").(UserRepository),
             Logger:     c.MustMake("logger").(Logger),
@@ -517,12 +558,12 @@ Tránh circular dependencies trong factory functions:
 
 ```go
 // ❌ Sai - circular dependency
-container.Bind("service-a", func(c *di.Container) interface{} {
+container.Bind("service-a", func(c di.Container) interface{} {
     serviceB := c.MustMake("service-b")
     return &ServiceA{ServiceB: serviceB}
 })
 
-container.Bind("service-b", func(c *di.Container) interface{} {
+container.Bind("service-b", func(c di.Container) interface{} {
     serviceA := c.MustMake("service-a") // Deadlock!
     return &ServiceB{ServiceA: serviceA}
 })
@@ -534,7 +575,7 @@ Singleton instances được giữ trong memory suốt vòng đời container:
 
 ```go
 // Cân nhắc memory usage với large objects
-container.Singleton("large-cache", func(c *di.Container) interface{} {
+container.Singleton("large-cache", func(c di.Container) interface{} {
     return cache.NewLargeCache(1000000) // Sẽ tồn tại suốt đời app
 })
 ```
@@ -546,13 +587,12 @@ container.Singleton("large-cache", func(c *di.Container) interface{} {
 ```go
 type DatabaseProvider struct{}
 
-func (p *DatabaseProvider) Register(app interface{}) {
-    if container, ok := app.(*Container); ok {
-        container.Singleton("database", func(c *di.Container) interface{} {
-            config := c.MustMake("config").(*Config)
-            return database.Connect(config.DatabaseURL)
-        })
-    }
+func (p *DatabaseProvider) Register(app Application) {
+    container := app.Container()
+    container.Singleton("database", func(c di.Container) interface{} {
+        config := c.MustMake("config").(config.Config)
+        return database.Connect(config.DatabaseURL)
+    })
 }
 ```
 
@@ -560,10 +600,10 @@ func (p *DatabaseProvider) Register(app interface{}) {
 
 ```go
 type App struct {
-    container *Container
+    container Container
 }
 
-func (app *App) Container() *Container {
+func (app *App) Container() Container {
     return app.container
 }
 

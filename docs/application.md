@@ -51,7 +51,7 @@ Application interface áp dụng các pattern sau:
 
 ### Container Access
 
-#### `Container() *Container`
+#### `Container() Container`
 
 Trả về instance DI container của ứng dụng.
 
@@ -60,7 +60,7 @@ Trả về instance DI container của ứng dụng.
 - Hỗ trợ đăng ký hoặc resolve các dependency
 
 **Trả về:**
-- `*Container`: Instance container hiện tại của ứng dụng
+- `Container`: Interface container hiện tại của ứng dụng
 
 **Ví dụ:**
 ```go
@@ -233,12 +233,12 @@ if err != nil {
 
 **Ví dụ:**
 ```go
-app.Bind("logger", func(c *di.Container) interface{} {
+app.Bind("logger", func(c di.Container) interface{} {
     return log.New(os.Stdout, "APP: ", log.LstdFlags)
 })
 
-app.Bind("mailer", func(c *di.Container) interface{} {
-    config := c.MustMake("config").(*Config)
+app.Bind("mailer", func(c di.Container) interface{} {
+    config := c.MustMake("config").(config.Config)
     return smtp.NewMailer(config.SMTPHost, config.SMTPPort)
 })
 ```
@@ -258,13 +258,13 @@ app.Bind("mailer", func(c *di.Container) interface{} {
 **Ví dụ:**
 ```go
 // Database connection singleton
-app.Singleton("database", func(c *di.Container) interface{} {
-    config := c.MustMake("config").(*Config)
+app.Singleton("database", func(c di.Container) interface{} {
+    config := c.MustMake("config").(config.Config)
     return database.Connect(config.DatabaseURL)
 })
 
 // Cache service singleton
-app.Singleton("cache", func(c *di.Container) interface{} {
+app.Singleton("cache", func(c di.Container) interface{} {
     return redis.NewClient(&redis.Options{
         Addr: "localhost:6379",
     })

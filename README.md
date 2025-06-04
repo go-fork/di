@@ -160,7 +160,27 @@ func TestMyService(t *testing.T) {
 }
 ```
 
-Xem [doc.go](./doc.go) và [mocks/README.md](./mocks/README.md) để biết thêm chi tiết.
+## Tài liệu
+
+- [Tổng quan](docs/overview.md)
+- [Container](docs/container.md)
+- [Service Providers](docs/provider.md)
+- [Application](docs/application.md)
+- [Testing](docs/testing.md)
+- [Migration Guide](releases/next/MIGRATION.md)
+- [Release Notes](releases/next/RELEASE_NOTES.md)
+- [Release Process](releases/next/RELEASE_SUMMARY.md)
+
+Xem [doc.go](./doc.go) để biết thêm chi tiết về API và [mocks/](./mocks/) cho testing.
+
+## Lịch sử phiên bản
+
+Tài liệu phát triển hiện tại được lưu trong [releases/next/](releases/next/).
+Tài liệu của các phiên bản đã release được lưu trữ trong thư mục [releases/](releases/).
+
+## Đóng góp
+
+Xem [releases/README.md](releases/README.md) để hiểu workflow quản lý release và documentation.
 
 ## Giấy phép
 MIT

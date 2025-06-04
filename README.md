@@ -24,7 +24,7 @@ go get go.fork.vn/di
 import "go.fork.vn/di"
 
 container := di.New()
-container.Bind("service", func(c *di.Container) interface{} {
+container.Bind("service", func(c di.Container) interface{} {
     return &MyService{}
 })
 service := container.MustMake("service").(*MyService)
@@ -34,7 +34,7 @@ service := container.MustMake("service").(*MyService)
 
 ```go
 // Đăng ký dịch vụ singleton (chỉ khởi tạo một lần)
-container.Singleton("database", func(c *di.Container) interface{} {
+container.Singleton("database", func(c di.Container) interface{} {
     return database.Connect("localhost", "user", "pass")
 })
 
@@ -59,7 +59,7 @@ appConfig := container.MustMake("config").(*Config)
 
 ```go
 // Đăng ký alias cho service
-container.Singleton("logger", func(c *di.Container) interface{} {
+container.Singleton("logger", func(c di.Container) interface{} {
     return &Logger{}
 })
 container.Alias("logger", "log")
@@ -74,10 +74,10 @@ log2 := container.MustMake("log").(*Logger)
 
 ```go
 // Tự động inject dependencies vào hàm
-container.Singleton("userRepo", func(c *di.Container) interface{} {
+container.Singleton("userRepo", func(c di.Container) interface{} {
     return &UserRepository{}
 })
-container.Singleton("userService", func(c *di.Container) interface{} {
+container.Singleton("userService", func(c di.Container) interface{} {
     return &UserService{
         Repo: c.MustMake("userRepo").(*UserRepository),
     }
@@ -99,7 +99,7 @@ type DatabaseProvider struct{}
 
 func (p *DatabaseProvider) Register(app di.Application) {
     // Đăng ký database connection
-    app.Singleton("db", func(c *di.Container) interface{} {
+    app.Singleton("db", func(c di.Container) interface{} {
         return &Database{}
     })
 }

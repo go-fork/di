@@ -199,11 +199,11 @@ container := di.New()
 
 **Ví dụ:**
 ```go
-container.Bind("logger", func(c *di.Container) interface{} {
+container.Bind("logger", func(c di.Container) interface{} {
     return &Logger{Level: "info"}
 })
 
-container.Bind("database", func(c *di.Container) interface{} {
+container.Bind("database", func(c di.Container) interface{} {
     config := c.MustMake("config").(config.Config)
     return database.Connect(config.DSN)
 })

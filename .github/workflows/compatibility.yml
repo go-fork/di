@@ -109,7 +109,7 @@ jobs:
               container := di.New()
               
               // Bind a service to demonstrate container usage
-              container.Bind("service", func(c *di.Container) interface{} {
+              container.Bind("service", func(c di.Container) interface{} {
                   return &Service{Name: "test-service"}
               })
               

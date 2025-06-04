@@ -36,8 +36,8 @@
 // # Ví dụ sử dụng
 //
 //	container := di.New()
-//	container.Bind("logger", func(c *di.Container) interface{} { return log.NewLogger() })
-//	container.Singleton("db", func(c *di.Container) interface{} { return database.New("dsn") })
+//	container.Bind("logger", func(c di.Container) interface{} { return log.NewLogger() })
+//	container.Singleton("db", func(c di.Container) interface{} { return database.New("dsn") })
 //	container.Instance("config", configManager)
 //	container.Alias("logger", "log")
 //	logger := container.MustMake("logger").(log.Logger)

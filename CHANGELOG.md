@@ -71,17 +71,17 @@ và dự án này tuân theo [Semantic Versioning](https://semver.org/spec/v2.0.
 - **Testing Support**: Complete mock objects và testing strategies documentation
 
 ### Changed
-- **Package Name**: Migrated từ `github.com/go-fork/di` sang `go.fork.vn/di`
+- **Package Name**: Migrated từ `github.com/Fork/di` sang `go.fork.vn/di`
 - **Module Path**: Updated go.mod với new module name
 - **Import Paths**: Updated tất cả internal imports và documentation
 - **Installation Instructions**: Updated README.md với new package path
 
 ### Breaking Changes
 - **Package Import Path**: 
-  - Old: `import "github.com/go-fork/di"`
+  - Old: `import "github.com/Fork/di"`
   - New: `import "go.fork.vn/di"`
 - **Mocks Import Path**:
-  - Old: `import "github.com/go-fork/di/mocks"`
+  - Old: `import "github.com/Fork/di/mocks"`
   - New: `import "go.fork.vn/di/mocks"`
 
 ### Migration
@@ -102,7 +102,7 @@ và dự án này tuân theo [Semantic Versioning](https://semver.org/spec/v2.0.
 - Performance optimization guidelines
 
 ### Changed
-- **BREAKING**: Package name changed from `github.com/go-fork/di` to `go.fork.vn/di`
+- **BREAKING**: Package name changed from `github.com/Fork/di` to `go.fork.vn/di`
 - All documentation updated to reflect new package name
 - Installation instructions updated for new import path
 
@@ -118,8 +118,8 @@ và dự án này tuân theo [Semantic Versioning](https://semver.org/spec/v2.0.
 - Added detailed BindingFunc documentation with usage patterns
 
 ### Migration
-- Update import statements from `github.com/go-fork/di` to `go.fork.vn/di`
-- Update mocks import from `github.com/go-fork/di/mocks` to `go.fork.vn/di/mocks`
+- Update import statements from `github.com/Fork/di` to `go.fork.vn/di`
+- Update mocks import from `github.com/Fork/di/mocks` to `go.fork.vn/di/mocks`
 - No API changes - seamless transition for existing code
 
 ## [0.0.5] - 2025-05-26

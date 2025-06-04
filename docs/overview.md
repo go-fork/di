@@ -2,7 +2,7 @@
 
 ## Giới thiệu
 
-Hệ thống Dependency Injection (DI) của Go-Fork được thiết kế để cung cấp một kiến trúc mạnh mẽ, linh hoạt và dễ sử dụng cho việc quản lý dependencies trong ứng dụng Go. Hệ thống này lấy cảm hứng từ các framework hiện đại như Laravel, Spring Boot nhưng được tối ưu hóa cho Go language idioms.
+Hệ thống Dependency Injection (DI) của Fork được thiết kế để cung cấp một kiến trúc mạnh mẽ, linh hoạt và dễ sử dụng cho việc quản lý dependencies trong ứng dụng Go. Hệ thống này lấy cảm hứng từ các framework hiện đại như Laravel, Spring Boot nhưng được tối ưu hóa cho Go language idioms.
 
 ## Kiến trúc Cốt lõi
 
@@ -566,4 +566,4 @@ trace := container.GetTrace()
 
 ---
 
-*Tài liệu này cung cấp một cái nhìn tổng quan về hệ thống Dependency Injection của Go-Fork. Để biết thêm chi tiết về từng component, vui lòng tham khảo các tài liệu chuyên môn tương ứng.*
+*Tài liệu này cung cấp một cái nhìn tổng quan về hệ thống Dependency Injection của Fork. Để biết thêm chi tiết về từng component, vui lòng tham khảo các tài liệu chuyên môn tương ứng.*

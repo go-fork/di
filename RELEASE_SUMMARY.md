@@ -10,7 +10,7 @@
 ## ✅ All Tasks Completed
 
 ### 1. **Package Migration** ✅
-- [x] Updated `go.mod` from `github.com/go-fork/di` to `go.fork.vn/di`
+- [x] Updated `go.mod` from `github.com/Fork/di` to `go.fork.vn/di`
 - [x] Updated all import statements in source code
 - [x] Updated all documentation references
 - [x] Updated mock objects imports
@@ -93,7 +93,7 @@
 
 ## 🔗 Important Links
 
-- **GitHub Release**: https://github.com/go-fork/di/releases/tag/v0.1.0
+- **GitHub Release**: github.com/go-fork/di/releases/tag/v0.1.0
 - **Installation**: `go get go.fork.vn/di@v0.1.0`
 - **Documentation**: `docs/` directory
 - **Migration Guide**: `MIGRATION.md`

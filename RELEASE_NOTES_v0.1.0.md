@@ -89,7 +89,7 @@ type Application interface {
 
 **Old (v0.0.x):**
 ```go
-import "github.com/go-fork/di"
+import "github.com/Fork/di"
 ```
 
 **New (v0.1.0+):**
@@ -256,13 +256,13 @@ func (p *PluginProvider) Register(app interface{}) {
 
 1. **Update go.mod**
    ```bash
-   go mod edit -droprequire github.com/go-fork/di
+   go mod edit -droprequire github.com/Fork/di
    go get go.fork.vn/di@v0.1.0
    ```
 
 2. **Update imports**
    ```bash
-   find . -name "*.go" -exec sed -i 's|github.com/go-fork/di|go.fork.vn/di|g' {} \;
+   find . -name "*.go" -exec sed -i 's|github.com/Fork/di|go.fork.vn/di|g' {} \;
    ```
 
 3. **Verify changes**

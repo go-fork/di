@@ -6,6 +6,11 @@ và dự án này tuân theo [Semantic Versioning](https://semver.org/spec/v2.0.
 
 ## [Unreleased]
 
+### Changed
+- Repository structure now organized with releases/ directory
+- Documentation moved to releases/next/ for development
+- Historical releases archived in releases/vX.X.X/ directories
+
 ## [0.1.3] - 2025-06-04
 
 ### Added

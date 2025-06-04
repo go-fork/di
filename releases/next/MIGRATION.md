@@ -1,31 +1,46 @@
-# Migration Guide
+# Migration Guide - v0.1.3
 
-This document provides migration instructions for the upcoming version.
-
-## From Previous Versions
+## From Previous Versions (v0.1.0, v0.1.1, v0.1.2)
 
 ### Breaking Changes
-- [List any breaking changes here]
+- **Documentation Structure**: Migration, Release Notes và Release Summary đã được di chuyển từ root directory vào `releases/next/`
+- **Symlinks Removed**: Không còn symlinks ở root directory
 
-### Deprecations  
-- [List any deprecated features here]
-
-### New Features
-- [List new features that may affect existing code]
+### New Features  
+- **Release Management Automation**: Scripts tự động cho việc quản lý release
+- **Structured Documentation**: Tổ chức tài liệu theo phiên bản rõ ràng
+- **Clean Repository Structure**: Root directory chỉ chứa source code
 
 ## Migration Steps
 
-### 1. Update Dependencies
-```bash
-go get github.com/go-fork/di@latest
+### 1. Update Documentation Links
+Nếu bạn đang link đến documentation:
+
+**Before:**
+```markdown
+[Migration Guide](MIGRATION.md)
+[Release Notes](RELEASE_NOTES.md)
 ```
 
-### 2. Code Changes
-[Describe specific code changes needed]
+**After:**
+```markdown
+[Migration Guide](releases/next/MIGRATION.md)  
+[Release Notes](releases/next/RELEASE_NOTES.md)
+```
 
-### 3. Testing
-[Describe testing considerations]
+### 2. Update Dependencies
+```bash
+go get go.fork.vn/di@v0.1.3
+```
+
+### 3. No Code Changes Required
+- API không thay đổi
+- Existing code sẽ hoạt động bình thường
+- Chỉ có cấu trúc documentation thay đổi
 
 ## Historical Migrations
 
-For migration guides from older versions, see the `releases/` directory.
+For migration guides from older versions, see:
+- [v0.1.2](../v0.1.2/MIGRATION_v0.1.2.md)
+- [v0.1.1](../v0.1.1/MIGRATION_v0.1.1.md) 
+- [v0.1.0](../v0.1.0/MIGRATION_v0.1.0.md)

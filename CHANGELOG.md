@@ -6,6 +6,41 @@ và dự án này tuân theo [Semantic Versioning](https://semver.org/spec/v2.0.
 
 ## [Unreleased]
 
+## [0.1.3] - 2025-06-04
+
+### Added
+- **Release Management Automation**: Scripts tự động cho việc quản lý release
+  - `scripts/archive_release.sh`: Tự động archive release và tạo development cycle mới
+  - `scripts/create_release_templates.sh`: Tạo templates cho development documentation
+  - Comprehensive workflow documentation trong `scripts/README.md`
+
+### Changed  
+- **Repository Structure Reorganization**: Tổ chức lại cấu trúc documentation
+  - Di chuyển release documentation từ root vào `releases/` directory
+  - Tạo `releases/next/` cho work-in-progress documentation
+  - Archive historical documentation vào `releases/vX.X.X/` directories
+  - Xóa symlinks ở root directory để có cấu trúc sạch sẽ
+- **Documentation Paths**: Cập nhật tất cả links đến documentation paths mới
+  - `MIGRATION.md` → `releases/next/MIGRATION.md`
+  - `RELEASE_NOTES.md` → `releases/next/RELEASE_NOTES.md` 
+  - `RELEASE_SUMMARY.md` → `releases/next/RELEASE_SUMMARY.md`
+
+### Fixed
+- **Clean Root Directory**: Root chỉ chứa source code và core documentation
+- **Professional Structure**: Tuân theo Go community best practices
+
+### Documentation
+- **Comprehensive Release Workflow**: Complete guide trong `releases/README.md`
+- **Automation Documentation**: Detailed scripts usage và workflow
+- **Historical Preservation**: Tất cả documentation của các version trước được bảo tồn
+
+### Breaking Changes
+- **Documentation Paths**: Links đến migration guides và release notes đã thay đổi
+- **Repository Structure**: Developers cần update bookmarks và documentation links
+
+### Migration
+- Xem [Migration Guide](releases/next/MIGRATION.md) để biết chi tiết về việc update documentation links
+
 ## [0.1.2] - 2025-06-02
 
 ### Added

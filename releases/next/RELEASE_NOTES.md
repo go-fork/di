@@ -1,32 +1,73 @@
-# Release Notes
+# Release Notes - v0.1.3
 
-## Upcoming Version
+**Release Date**: June 4, 2025  
+**Type**: Documentation & Tooling Enhancement
 
-### New Features
-- [List new features here]
+## 🎯 Key Improvements
 
-### Improvements
-- [List improvements here]
+### Repository Structure Reorganization
+- **Clean Root Directory**: Moved all release documentation to `releases/` directory
+- **Structured Documentation**: Clear separation between development and released docs
+- **Professional Layout**: Following industry best practices for Go projects
 
-### Bug Fixes
-- [List bug fixes here]
+### Release Management Automation  
+- **Automated Scripts**: Added `scripts/archive_release.sh` and `scripts/create_release_templates.sh`
+- **Streamlined Workflow**: Simple process for creating new releases
+- **Consistent Naming**: Standardized documentation file naming across versions
 
-### Breaking Changes
-- [List breaking changes here]
+### Documentation Enhancements
+- **Clear Navigation**: Easy access to both current and historical documentation
+- **Comprehensive Guides**: Detailed workflow documentation in `releases/README.md`
+- **Developer Experience**: Simplified development workflow
 
-## Installation
+## 🛠️ New Features
 
+### Release Automation Scripts
 ```bash
-go get github.com/go-fork/di@latest
+# Archive current release and setup new cycle
+./scripts/archive_release.sh v1.2.3
+
+# Create fresh templates for development
+./scripts/create_release_templates.sh
 ```
 
-## Documentation
+### Structured Documentation
+```
+releases/
+├── next/           # Current development docs
+├── v0.1.0/        # Historical releases  
+├── v0.1.1/
+└── v0.1.2/
+```
 
-- [Getting Started](docs/index.md)
-- [Container Usage](docs/container.md)
-- [Service Providers](docs/provider.md)
+## 💥 Breaking Changes
+
+- **Documentation Paths**: 
+  - `MIGRATION.md` → `releases/next/MIGRATION.md`
+  - `RELEASE_NOTES.md` → `releases/next/RELEASE_NOTES.md`
+  - `RELEASE_SUMMARY.md` → `releases/next/RELEASE_SUMMARY.md`
+
+## 🔧 Improvements
+
+- **Cleaner Repository**: Root directory only contains source code and core docs
+- **Better Organization**: Historical documentation properly archived
+- **Automation Ready**: Scripts handle tedious release management tasks
+- **Professional Structure**: Following Go community standards
+
+## 📦 Installation
+
+```bash
+go get go.fork.vn/di@v0.1.3
+```
+
+## 📚 Documentation
+
 - [Migration Guide](MIGRATION.md)
+- [Release Process](RELEASE_SUMMARY.md)  
+- [Container Usage](../../docs/container.md)
+- [Service Providers](../../docs/provider.md)
 
-## Historical Release Notes
+## 🔗 Historical Release Notes
 
-For release notes from previous versions, see the `releases/` directory.
+- [v0.1.2](../v0.1.2/RELEASE_NOTES_v0.1.2.md)
+- [v0.1.0](../v0.1.0/RELEASE_NOTES_v0.1.0.md)

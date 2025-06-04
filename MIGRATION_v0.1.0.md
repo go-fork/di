@@ -2,7 +2,7 @@
 
 ## Tổng quan
 
-Kể từ phiên bản v0.1.0, package đã được chuyển từ `github.com/Fork/di` sang `go.fork.vn/di`. Đây là hướng dẫn chi tiết để migration code của bạn.
+Kể từ phiên bản v0.1.0, package đã được chuyển từ `github.com/go-fork/di` sang `go.fork.vn/di`. Đây là hướng dẫn chi tiết để migration code của bạn.
 
 ## 🚨 Breaking Changes
 
@@ -10,7 +10,7 @@ Kể từ phiên bản v0.1.0, package đã được chuyển từ `github.com/F
 
 **Before (v0.0.x):**
 ```go
-import "github.com/Fork/di"
+import "github.com/go-fork/di"
 ```
 
 **After (v0.1.0+):**
@@ -22,7 +22,7 @@ import "go.fork.vn/di"
 
 **Before:**
 ```go
-import "github.com/Fork/di/mocks"
+import "github.com/go-fork/di/mocks"
 ```
 
 **After:**
@@ -36,7 +36,7 @@ import "go.fork.vn/di/mocks"
 
 ```bash
 # Remove old dependency
-go mod edit -droprequire github.com/Fork/di
+go mod edit -droprequire github.com/go-fork/di
 
 # Add new dependency  
 go get go.fork.vn/di@v0.1.0
@@ -51,10 +51,10 @@ go mod tidy
 
 ```bash
 # For Unix/macOS/Linux
-find . -name "*.go" -type f -exec sed -i '' 's|github.com/Fork/di|go.fork.vn/di|g' {} \;
+find . -name "*.go" -type f -exec sed -i '' 's|github.com/go-fork/di|go.fork.vn/di|g' {} \;
 
 # For Linux (without '' after -i)
-find . -name "*.go" -type f -exec sed -i 's|github.com/Fork/di|go.fork.vn/di|g' {} \;
+find . -name "*.go" -type f -exec sed -i 's|github.com/go-fork/di|go.fork.vn/di|g' {} \;
 ```
 
 **Or manually update each file:**
@@ -62,8 +62,8 @@ find . -name "*.go" -type f -exec sed -i 's|github.com/Fork/di|go.fork.vn/di|g' 
 ```go
 // ❌ Old import
 import (
-    "github.com/Fork/di"
-    "github.com/Fork/di/mocks"
+    "github.com/go-fork/di"
+    "github.com/go-fork/di/mocks"
 )
 
 // ✅ New import  
@@ -109,8 +109,8 @@ package main
 
 import (
     "fmt"
-    "github.com/Fork/di"
-    "github.com/Fork/di/mocks"
+    "github.com/go-fork/di"
+    "github.com/go-fork/di/mocks"
 )
 
 type MyService struct {
@@ -164,8 +164,8 @@ func main() {
 // ❌ Old test imports
 import (
     "testing"
-    "github.com/Fork/di"
-    "github.com/Fork/di/mocks"
+    "github.com/go-fork/di"
+    "github.com/go-fork/di/mocks"
     "github.com/stretchr/testify/assert"
 )
 
@@ -232,14 +232,14 @@ go: go.fork.vn/di@v0.1.0: reading https://go.fork.vn/di/@v/v0.1.0.mod: 404 Not F
 
 **Error:**
 ```
-import "github.com/Fork/di": cannot find package
+import "github.com/go-fork/di": cannot find package
 ```
 
 **Solution:**
 Tìm và thay thế tất cả import paths cũ:
 
 ```bash
-grep -r "github.com/Fork/di" . --include="*.go"
+grep -r "github.com/go-fork/di" . --include="*.go"
 ```
 
 #### 3. Go Module Cache
@@ -257,7 +257,7 @@ go mod download
 
 ```bash
 # Check for old imports
-grep -r "github.com/Fork/di" . --include="*.go"
+grep -r "github.com/go-fork/di" . --include="*.go"
 
 # Verify new imports work
 go list -m go.fork.vn/di
